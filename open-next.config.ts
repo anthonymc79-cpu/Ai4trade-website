@@ -1,8 +1,14 @@
 // open-next.config.ts
 //
-// Minimal config for @opennextjs/cloudflare — the default export is enough
-// for this site (no custom incremental cache or queue overrides needed).
-// See https://opennext.js.org/cloudflare for advanced options (R2-backed
-// ISR cache, KV, Durable Objects, etc.) if the app grows into needing them.
+// defineCloudflareConfig() fills in the required `default` server config
+// (incremental cache, queue, etc. all left as Cloudflare's defaults here)
+// — a bare `export default {}` fails validation because it has no
+// `default` key at all, which is what "config.default cannot be empty"
+// actually means: the field was missing, not literally empty.
+// See https://opennext.js.org/cloudflare for overriding the cache/queue
+// implementations (e.g. R2-backed ISR cache) if this site grows into
+// needing them.
 
-export default {};
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+
+export default defineCloudflareConfig({});
