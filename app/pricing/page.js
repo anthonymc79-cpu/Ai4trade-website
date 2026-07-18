@@ -13,8 +13,9 @@ const PRICES = {
   USD: { symbol: "$", starter: 35, team: 95 },
 };
 
-export default function PricingPage({ searchParams }) {
-  const currency = searchParams?.currency === "USD" ? "USD" : "GBP";
+export default async function PricingPage({ searchParams }) {
+  const params = await searchParams;
+  const currency = params?.currency === "USD" ? "USD" : "GBP";
   const p = PRICES[currency];
 
   return (

@@ -5,12 +5,15 @@ export async function middleware(request) {
   const { pathname } = request.nextUrl;
   let response = NextResponse.next({ request });
 
-  // Region-based currency on the pricing page. `request.geo` is populated
-  // automatically on Vercel; on Cloudflare Pages, read the equivalent
-  // `request.cf.country` header instead if you deploy there.
+  // Region-based currency on the pricing page. Next.js 15 removed
+  // `request.geo`, so this reads Cloudflare's own geolocation header
+  // instead — set automatically on every request that passes through
+  // Cloudflare, so no extra config needed there. (If you ever deploy this
+  // particular page to Vercel instead, swap this for `geolocation(request)`
+  // from `@vercel/functions`.)
   if (pathname === "/pricing") {
-    const country = request.geo?.country;
-    if (country && country !== "GB") {
+    const country = request.headers.get("cf-ipcountry");
+    if (country && country !== "GB" && country !== "XX") {
       const url = request.nextUrl.clone();
       url.searchParams.set("currency", "USD");
       response = NextResponse.rewrite(url);

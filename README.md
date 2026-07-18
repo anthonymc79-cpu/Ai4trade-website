@@ -87,30 +87,41 @@ works out of the box — just update it once your real app domain is live.
 
 ## Deploying
 
-### Option A — Cloudflare Pages (matches the earlier setup guide)
+### Option A — Cloudflare, via OpenNext (recommended)
 
-Cloudflare Pages needs the `@cloudflare/next-on-pages` adapter for the App
-Router features used here (middleware, API routes):
+Cloudflare deprecated `@cloudflare/next-on-pages` in favour of **OpenNext for
+Cloudflare Workers**, which fully supports the Next.js 15 features this
+site uses (Route Handlers, ISR, Server Components, middleware) rather than
+being limited to the Edge runtime. This replaces the earlier "Cloudflare
+Pages" deploy path from the setup guide — same domain, same DNS-on-Cloudflare
+approach, different underlying product (Workers instead of Pages).
 
 ```bash
-npm run pages:build
-npm run pages:deploy
+npm install
+npm run deploy
 ```
 
-Or connect the Git repo directly in the Cloudflare dashboard and set:
-- **Build command:** `npx @cloudflare/next-on-pages`
-- **Build output directory:** `.vercel/output/static`
+That builds with `opennextjs-cloudflare build` and deploys with
+`opennextjs-cloudflare deploy`, using the config in `wrangler.jsonc` and
+`open-next.config.ts`. First-time setup:
 
-Known adapter gaps to watch for as the site grows: some ISR configurations
-and edge cases in Server Components aren't fully supported yet. Middleware
-and the API route used here are well-supported.
+1. `npx wrangler login` to authenticate with your Cloudflare account.
+2. Add your environment variables (Supabase keys, Stripe keys, etc. from
+   `.env.example`) as Worker secrets: `npx wrangler secret put STRIPE_SECRET_KEY`
+   (repeat per secret — anything server-only shouldn't go in `wrangler.jsonc`
+   directly).
+3. After deploying, attach your custom domain (`www.yourdomain.com`) to the
+   Worker from the Cloudflare dashboard under **Workers & Pages → your
+   Worker → Settings → Domains & Routes**.
+
+Use `npm run preview` to test the Workers build locally before deploying.
 
 ### Option B — Vercel
 
 Since this is a Next.js site, Vercel needs zero configuration — connect
-the repo and deploy. This sidesteps the adapter entirely, at the cost of
-having your marketing site and app on two different platforms (Vercel +
-Railway) rather than Cloudflare + Railway.
+the repo and deploy. Sidesteps any Cloudflare-adapter question entirely,
+at the cost of having your marketing site and app on two different
+platforms (Vercel + Railway) rather than Cloudflare + Railway.
 
 ## Replacing the placeholder video files
 

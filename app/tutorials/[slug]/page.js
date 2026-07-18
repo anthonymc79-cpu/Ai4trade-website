@@ -14,7 +14,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const tutorial = await getTutorialBySlug(params.slug);
+  const { slug } = await params;
+  const tutorial = await getTutorialBySlug(slug);
   if (!tutorial) return {};
   return {
     title: `${tutorial.title} — Voltro tutorials`,
@@ -23,13 +24,13 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function TutorialPage({ params }) {
-  const tutorial = await getTutorialBySlug(params.slug);
+  const { slug } = await params;
+  const tutorial = await getTutorialBySlug(slug);
   if (!tutorial) notFound();
 
   // Reads the real Supabase session + the business's live subscription
-  // status — the same source of truth middleware.js uses (there, via the
-  // subscription_status cookie, since middleware can't hit the database
-  // directly) to redirect /tutorials/advanced-* routes.
+  // status — the same source of truth middleware.js uses to redirect
+  // /tutorials/advanced-* routes before this page even renders.
   const { isSubscriber } = await getCurrentUser();
   const isLocked = tutorial.tier === "pro" && !isSubscriber;
 

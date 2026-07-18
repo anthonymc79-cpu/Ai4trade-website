@@ -5,7 +5,7 @@
 // progress should live) — this stub just validates and echoes back.
 
 export async function POST(request, { params }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   let body;
   try {
