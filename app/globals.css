@@ -1,0 +1,350 @@
+/* ==========================================================================
+   Design tokens
+   ==========================================================================
+   Palette: a switchboard panel, not a moodboard.
+   --ink     deep navy-charcoal, the panel housing
+   --panel   slightly raised panel surface
+   --paper   warm parchment, used for text on dark and light section fills
+   --copper  brass/copper accent — the colour of the wire itself
+   --trace   live-circuit teal, used for active/positive states + the trace line
+   --wire    muted grey-blue, secondary text and connecting lines
+   ========================================================================== */
+
+:root {
+  --ink: #0f1a24;
+  --ink-raised: #142330;
+  --panel: #16232f;
+  --paper: #ede6d8;
+  --paper-dim: #c9c2b3;
+  --copper: #bf7327;
+  --copper-bright: #d98c3d;
+  --trace: #3fc7a0;
+  --wire: #5b6b78;
+  --wire-line: #2a3947;
+  --danger: #c1512f;
+
+  --font-display: var(--font-display-var), "Arial Narrow", sans-serif;
+  --font-body: var(--font-body-var), "Segoe UI", sans-serif;
+  --font-mono: var(--font-mono-var), "Courier New", monospace;
+
+  --container: 1120px;
+  --radius: 3px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--copper);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--trace);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ==========================================================================
+   Layout utilities
+   ========================================================================== */
+
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 96px 0;
+}
+
+.section--tight {
+  padding: 64px 0;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--copper-bright);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: var(--copper-bright);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 860px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .section {
+    padding: 64px 0;
+  }
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn--copper {
+  background: var(--copper);
+  color: var(--ink);
+}
+
+.btn--copper:hover {
+  background: var(--copper-bright);
+}
+
+.btn--ghost {
+  border-color: var(--wire-line);
+  color: var(--paper);
+}
+
+.btn--ghost:hover {
+  border-color: var(--trace);
+}
+
+/* ==========================================================================
+   Signature element: the cable tag
+   --------------------------------------------------------------------------
+   Modelled on the identification tags electricians clip to cable runs and
+   consumer units — a punched hole at the top-left, a short lead line, and
+   a printed label. Used for every card-shaped unit on the site: features,
+   pricing tiers, tutorial thumbnails.
+   ========================================================================== */
+
+.tag {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--wire-line);
+  border-radius: var(--radius);
+  padding: 28px 24px 24px;
+  margin-top: 22px;
+}
+
+.tag::before {
+  content: "";
+  position: absolute;
+  top: -22px;
+  left: 22px;
+  width: 1px;
+  height: 22px;
+  background: var(--wire-line);
+}
+
+.tag::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 1px solid var(--wire-line);
+}
+
+.tag__code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--wire);
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.tag__title {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.tag__body {
+  color: var(--paper-dim);
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--wire);
+  margin-bottom: 8px;
+}
+
+.field input {
+  width: 100%;
+  background: var(--ink);
+  border: 1px solid var(--wire-line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: 15px;
+}
+
+.field input:focus {
+  border-color: var(--trace);
+  outline: none;
+}
+
+.field small {
+  display: block;
+  color: var(--wire);
+  font-size: 12.5px;
+  margin-top: 6px;
+}
+
+.formError {
+  background: rgba(193, 81, 47, 0.12);
+  border: 1px solid var(--danger);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.formCard {
+  max-width: 440px;
+}
+
+/* ==========================================================================
+   Signature element: the trace line
+   --------------------------------------------------------------------------
+   A vertical circuit trace running down the left margin, connecting
+   sections like a wiring run — with a solder-point at each anchor.
+   Desktop only: on narrow viewports it competes with content for space.
+   ========================================================================== */
+
+.trace-rail {
+  position: fixed;
+  top: 0;
+  left: 42px;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--wire-line) 8%,
+    var(--wire-line) 92%,
+    transparent 100%
+  );
+  z-index: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 1200px) {
+  .trace-rail {
+    display: none;
+  }
+}
+
+.trace-node {
+  position: absolute;
+  left: -3.5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--trace);
+  box-shadow: 0 0 8px 1px rgba(63, 199, 160, 0.5);
+}
