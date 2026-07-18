@@ -26,7 +26,7 @@ const monoFont = IBM_Plex_Mono({
 });
 
 export const metadata = {
-  title: "Voltro — job management for electrical businesses",
+  title: "Ai4Trade — job management for electrical businesses",
   description:
     "Quoting, EICR certification, floorplans, and job management for electrical businesses — with a free booking portal for their customers.",
 };

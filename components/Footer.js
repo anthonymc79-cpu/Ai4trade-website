@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container">
         <div className={styles.row}>
           <div className={styles.brand}>
-            <span className={styles.brandName}>Voltro</span>
+            <span className={styles.brandName}>Ai4Trade</span>
             Job management, quoting, and certification for electrical
             businesses — built by people who've stood in a fuse cupboard
             at 5pm on a Friday.
@@ -43,7 +43,7 @@ export default function Footer() {
               <h4>Company</h4>
               <ul>
                 <li>
-                  <a href="mailto:hello@voltro.example">Contact</a>
+                  <a href="mailto:hello@ai4trade.example">Contact</a>
                 </li>
                 <li>
                   <Link href="/pricing">Book a demo</Link>
@@ -54,7 +54,7 @@ export default function Footer() {
         </div>
 
         <div className={styles.bottom}>
-          <span>© {new Date().getFullYear()} Voltro Ltd.</span>
+          <span>© {new Date().getFullYear()} Ai4Trade Ltd.</span>
           <span>Wired for the trade.</span>
         </div>
       </div>

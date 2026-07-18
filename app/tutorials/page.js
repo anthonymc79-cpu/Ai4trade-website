@@ -3,7 +3,7 @@ import styles from "../for-electricians/ForElectricians.module.css";
 import { getTutorials } from "@/lib/tutorials";
 
 export const metadata = {
-  title: "Tutorials — Voltro",
+  title: "Tutorials — Ai4Trade",
 };
 
 // Rebuild this listing at most once every hour, picking up new tutorials
@@ -18,7 +18,7 @@ export default async function TutorialsPage() {
       <section className={styles.hero}>
         <div className="container">
           <span className="eyebrow">Tutorials</span>
-          <h1 className={styles.heroTitle}>Learn Voltro by watching it work</h1>
+          <h1 className={styles.heroTitle}>Learn Ai4Trade by watching it work</h1>
           <p className={styles.heroLead}>
             Short videos covering everything from your first job to advanced
             quoting rules. Marked <strong style={{ color: "var(--copper-bright)" }}>Pro</strong> tutorials

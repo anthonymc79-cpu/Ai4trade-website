@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "./ForElectricians.module.css";
 
 export const metadata = {
-  title: "Voltro for electrical businesses",
+  title: "Ai4Trade for electrical businesses",
   description:
     "Job management, quoting, EICR certification, and a free branded customer portal — for electrical businesses of any size.",
 };
@@ -50,7 +50,7 @@ export default function ForElectriciansPage() {
             Run the business side, so you can get back to the job side.
           </h1>
           <p className={styles.heroLead}>
-            Voltro replaces the spreadsheet, the paper EICR pad, and the
+            Ai4Trade replaces the spreadsheet, the paper EICR pad, and the
             group chat with your office — one subscription per business,
             free for every customer who books through you.
           </p>
@@ -92,7 +92,7 @@ export default function ForElectriciansPage() {
                 Every subscribing business gets its own web address —
                 shareable on invoices, your van, or your own website.
               </p>
-              <span className={styles.portalUrl}>sparky-ltd.voltro.app</span>
+              <span className={styles.portalUrl}>sparky-ltd.ai4trade.app</span>
             </div>
             <div>
               <p style={{ color: "var(--paper-dim)", fontSize: 14.5 }}>

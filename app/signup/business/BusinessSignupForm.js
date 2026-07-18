@@ -99,7 +99,7 @@ export default function BusinessSignupForm() {
               }}
               placeholder="sparky-ltd"
             />
-            <small>{form.slug || "sparky-ltd"}.voltro.app</small>
+            <small>{form.slug || "sparky-ltd"}.ai4trade.app</small>
           </div>
 
           <div className="field">
@@ -134,7 +134,7 @@ export default function BusinessSignupForm() {
               onChange={(e) => updateField("plan", e.target.value)}
               style={{
                 width: "100%",
-                background: "var(--ink)",
+                background: "var(--panel)",
                 border: "1px solid var(--wire-line)",
                 borderRadius: "3px",
                 padding: "12px 14px",

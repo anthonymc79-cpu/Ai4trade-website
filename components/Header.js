@@ -23,7 +23,7 @@ export default function Header() {
               <circle cx="4" cy="4" r="1.6" fill="var(--trace)" />
               <circle cx="20" cy="20" r="1.6" fill="var(--trace)" />
             </svg>
-            Voltro
+            Ai4Trade
           </Link>
 
           <nav className={styles.nav}>

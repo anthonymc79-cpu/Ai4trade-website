@@ -1,8 +1,8 @@
-# Voltro marketing site
+# Ai4Trade marketing site
 
 Next.js (App Router) marketing site: homepage splitter, the B2B pitch
 (`/for-electricians`), the homeowner-facing page (`/services`), pricing,
-and a video tutorial library — built from the plan discussed for Voltro,
+and a video tutorial library — built from the plan discussed for Ai4Trade,
 the electrical-business SaaS platform.
 
 ## What's demonstrated where
