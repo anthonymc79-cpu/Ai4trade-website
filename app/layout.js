@@ -29,6 +29,14 @@ export const metadata = {
   title: "Ai4Trade — job management for electrical businesses",
   description:
     "Quoting, EICR certification, floorplans, and job management for electrical businesses — with a free booking portal for their customers.",
+  // Keeps the site out of Google while it's still being tested. Set
+  // NEXT_PUBLIC_SITE_IS_LIVE=true (as a Plain text variable in Cloudflare)
+  // once you're ready for it to be publicly discoverable, then redeploy —
+  // this reads at build time, so a fresh deploy is required either way.
+  robots:
+    process.env.NEXT_PUBLIC_SITE_IS_LIVE === "true"
+      ? { index: true, follow: true }
+      : { index: false, follow: false },
 };
 
 export default function RootLayout({ children }) {
