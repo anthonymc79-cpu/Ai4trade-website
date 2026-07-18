@@ -1,0 +1,50 @@
+.hero {
+  padding: 80px 0 20px;
+}
+
+.heroTitle {
+  font-size: clamp(32px, 4.5vw, 48px);
+  max-width: 760px;
+  margin: 18px 0 20px;
+}
+
+.heroLead {
+  max-width: 540px;
+  color: var(--paper-dim);
+  font-size: 17px;
+  margin-bottom: 32px;
+}
+
+.heroActions {
+  display: flex;
+  gap: 14px;
+}
+
+.portalCallout {
+  background: var(--panel);
+  border: 1px solid var(--wire-line);
+  border-radius: var(--radius);
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.portalUrl {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--trace);
+  background: var(--ink);
+  border: 1px solid var(--wire-line);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  display: inline-block;
+  margin-top: 14px;
+}
+
+@media (max-width: 780px) {
+  .portalCallout {
+    grid-template-columns: 1fr;
+  }
+}
