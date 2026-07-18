@@ -18,7 +18,7 @@ export async function generateMetadata({ params }) {
   const tutorial = await getTutorialBySlug(slug);
   if (!tutorial) return {};
   return {
-    title: `${tutorial.title} — Voltro tutorials`,
+    title: `${tutorial.title} — Ai4Trade tutorials`,
     description: tutorial.description,
   };
 }
@@ -53,7 +53,7 @@ export default async function TutorialPage({ params }) {
               This one's for subscribed businesses
             </h3>
             <p className="tag__body" style={{ margin: "0 auto 20px", maxWidth: 380 }}>
-              Advanced tutorials like this are included with any Voltro
+              Advanced tutorials like this are included with any Ai4Trade
               subscription — start one to unlock it.
             </p>
             <Link href="/pricing" className="btn btn--copper">

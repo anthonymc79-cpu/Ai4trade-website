@@ -1,27 +1,28 @@
 /* ==========================================================================
    Design tokens
    ==========================================================================
-   Palette: a switchboard panel, not a moodboard.
-   --ink     deep navy-charcoal, the panel housing
-   --panel   slightly raised panel surface
-   --paper   warm parchment, used for text on dark and light section fills
-   --copper  brass/copper accent — the colour of the wire itself
-   --trace   live-circuit teal, used for active/positive states + the trace line
-   --wire    muted grey-blue, secondary text and connecting lines
+   Palette: a switchboard panel by daylight, not a moodboard.
+   --ink       page background — warm off-white, not stark white
+   --ink-raised  a touch deeper, for alternating panels
+   --panel     card surface — clean white
+   --paper     primary text — deep navy-charcoal, not pure black
+   --copper    brass/copper accent — the colour of the wire itself
+   --trace     live-circuit teal, used for active states + the trace line
+   --wire      muted warm grey, secondary text and connecting lines
    ========================================================================== */
 
 :root {
-  --ink: #0f1a24;
-  --ink-raised: #142330;
-  --panel: #16232f;
-  --paper: #ede6d8;
-  --paper-dim: #c9c2b3;
-  --copper: #bf7327;
-  --copper-bright: #d98c3d;
-  --trace: #3fc7a0;
-  --wire: #5b6b78;
-  --wire-line: #2a3947;
-  --danger: #c1512f;
+  --ink: #f7f5ef;
+  --ink-raised: #efe9dd;
+  --panel: #ffffff;
+  --paper: #182530;
+  --paper-dim: #57626c;
+  --copper: #a85a2a;
+  --copper-bright: #c2703a;
+  --trace: #1f8f73;
+  --wire: #8a8477;
+  --wire-line: #e3dfd3;
+  --danger: #b23a22;
 
   --font-display: var(--font-display-var), "Arial Narrow", sans-serif;
   --font-body: var(--font-body-var), "Segoe UI", sans-serif;
@@ -273,7 +274,7 @@ button {
 
 .field input {
   width: 100%;
-  background: var(--ink);
+  background: var(--panel);
   border: 1px solid var(--wire-line);
   border-radius: var(--radius);
   padding: 12px 14px;
@@ -346,5 +347,5 @@ button {
   height: 8px;
   border-radius: 50%;
   background: var(--trace);
-  box-shadow: 0 0 8px 1px rgba(63, 199, 160, 0.5);
+  box-shadow: 0 0 8px 1px rgba(31, 143, 115, 0.35);
 }

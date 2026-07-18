@@ -1,9 +1,9 @@
 import styles from "../for-electricians/ForElectricians.module.css";
 
 export const metadata = {
-  title: "Get electrical work done — Voltro",
+  title: "Get electrical work done — Ai4Trade",
   description:
-    "Book a free enquiry with an electrician using Voltro, track your job, and keep every certificate in one place.",
+    "Book a free enquiry with an electrician using Ai4Trade, track your job, and keep every certificate in one place.",
 };
 
 const SERVICES = [
@@ -39,7 +39,7 @@ export default function ServicesPage() {
             Book electrical work, and actually know what's happening with it.
           </h1>
           <p className={styles.heroLead}>
-            Voltro is free for you to use — your electrician's the one
+            Ai4Trade is free for you to use — your electrician's the one
             paying for the tools. Register, describe the job, and track it
             through to a signed certificate.
           </p>

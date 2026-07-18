@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "./Home.module.css";
 
 export const metadata = {
-  title: "Voltro — job management for electrical businesses",
+  title: "Ai4Trade — job management for electrical businesses",
 };
 
 export default function HomePage() {
@@ -16,7 +16,7 @@ export default function HomePage() {
             customer who's waiting on you.
           </h1>
           <p className={styles.heroLead}>
-            Voltro is job management, quoting, and EICR certification built
+            Ai4Trade is job management, quoting, and EICR certification built
             for electrical businesses — with a free booking portal your own
             customers use to reach you.
           </p>

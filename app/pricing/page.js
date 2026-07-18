@@ -1,7 +1,7 @@
 import styles from "../for-electricians/ForElectricians.module.css";
 
 export const metadata = {
-  title: "Pricing — Voltro",
+  title: "Pricing — Ai4Trade",
 };
 
 // Rebuilt at most once an hour — pricing rarely changes, so this avoids a

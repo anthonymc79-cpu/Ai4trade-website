@@ -1,7 +1,7 @@
 import styles from "../../for-electricians/ForElectricians.module.css";
 
 export const metadata = {
-  title: "Subscription started — Voltro",
+  title: "Subscription started — Ai4Trade",
 };
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.yourdomain.com";
@@ -22,7 +22,7 @@ export default function SignupSuccessPage() {
           seconds. Log in to start setting up your team and your first job.
         </p>
         <a className="btn btn--copper" href={`${APP_URL}/login`}>
-          Log in to Voltro →
+          Log in to Ai4Trade →
         </a>
       </div>
     </section>

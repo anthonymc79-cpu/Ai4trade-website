@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "../for-electricians/ForElectricians.module.css";
 
 export const metadata = {
-  title: "Sign up — Voltro",
+  title: "Sign up — Ai4Trade",
 };
 
 export default function SignupChooserPage() {
