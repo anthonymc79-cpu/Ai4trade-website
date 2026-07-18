@@ -101,9 +101,21 @@ npm install
 npm run deploy
 ```
 
-That builds with `opennextjs-cloudflare build` and deploys with
-`opennextjs-cloudflare deploy`, using the config in `wrangler.jsonc` and
-`open-next.config.ts`. First-time setup:
+That runs `npm run build:worker` (which calls `opennextjs-cloudflare build`,
+producing `.open-next/worker.js`) and then `wrangler deploy`. Doing these
+as two separate scripts matters if you connect the repo to Cloudflare's
+dashboard rather than deploying from the CLI — Cloudflare's Git-connected
+Workers builds run **your configured build command**, then run `wrangler
+deploy` themselves afterward. If the build command isn't set to actually
+produce `.open-next/worker.js` first, `wrangler deploy` fails with
+`The entry-point file at ".open-next/worker.js" was not found` — deploy
+step ran before there was anything to deploy.
+
+If deploying via the Cloudflare dashboard's Git integration, set:
+- **Build command:** `npm run build:worker`
+- **Deploy command:** leave as Cloudflare's default (it runs `wrangler deploy` for you)
+
+First-time setup either way:
 
 1. `npx wrangler login` to authenticate with your Cloudflare account.
 2. Add your environment variables (Supabase keys, Stripe keys, etc. from
