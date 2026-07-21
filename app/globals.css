@@ -1,28 +1,30 @@
 /* ==========================================================================
    Design tokens
    ==========================================================================
-   Palette: a switchboard panel by daylight, not a moodboard.
-   --ink       page background — warm off-white, not stark white
+   Palette pulled from the Ai4Trade logo: bright circuit-blue, an orange
+   accent, and cool chrome-grey — kept light overall rather than matching
+   the logo's own dark badge background.
+   --ink       page background — cool light grey, not warm cream
    --ink-raised  a touch deeper, for alternating panels
    --panel     card surface — clean white
-   --paper     primary text — deep navy-charcoal, not pure black
-   --copper    brass/copper accent — the colour of the wire itself
-   --trace     live-circuit teal, used for active states + the trace line
-   --wire      muted warm grey, secondary text and connecting lines
+   --paper     primary text — near-black navy
+   --blue      the logo's circuit-blue — primary accent, links, the trace line
+   --orange    the logo's orange "4" — secondary accent, buttons
+   --wire      cool steel grey, secondary text and connecting lines
    ========================================================================== */
 
 :root {
-  --ink: #f7f5ef;
-  --ink-raised: #efe9dd;
+  --ink: #f4f6f8;
+  --ink-raised: #eaedf1;
   --panel: #ffffff;
-  --paper: #182530;
+  --paper: #10151b;
   --paper-dim: #57626c;
-  --copper: #a85a2a;
-  --copper-bright: #c2703a;
-  --trace: #1f8f73;
-  --wire: #8a8477;
-  --wire-line: #e3dfd3;
-  --danger: #b23a22;
+  --copper: #d9711c;
+  --copper-bright: #ef8a35;
+  --trace: #0f9fdb;
+  --wire: #7c8790;
+  --wire-line: #e1e5e9;
+  --danger: #cc3f2c;
 
   --font-display: var(--font-display-var), "Arial Narrow", sans-serif;
   --font-body: var(--font-body-var), "Segoe UI", sans-serif;
@@ -347,5 +349,5 @@ button {
   height: 8px;
   border-radius: 50%;
   background: var(--trace);
-  box-shadow: 0 0 8px 1px rgba(31, 143, 115, 0.35);
+  box-shadow: 0 0 8px 1px rgba(15, 159, 219, 0.35);
 }
