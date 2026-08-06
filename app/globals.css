@@ -2,36 +2,41 @@
    Design tokens
    ==========================================================================
    Palette pulled from the Ai4Trade logo: bright circuit-blue, an orange
-   accent, and cool chrome-grey — kept light overall rather than matching
-   the logo's own dark badge background.
-   --ink       page background — cool light grey, not warm cream
-   --ink-raised  a touch deeper, for alternating panels
+   accent, cool chrome-grey and a soft sky-blue wash behind the hero
+   dashboard — bright, product-led and light throughout.
+   --ink       page background — clean white
+   --ink-raised  soft sky-blue wash, used behind the hero/dashboard
    --panel     card surface — clean white
    --paper     primary text — near-black navy
-   --blue      the logo's circuit-blue — primary accent, links, the trace line
-   --orange    the logo's orange "4" — secondary accent, buttons
+   --blue      the logo's circuit-blue — primary accent, links, icons
+   --copper    the logo's orange "4" — secondary accent, primary buttons
    --wire      cool steel grey, secondary text and connecting lines
+   --success   positive metric deltas, confirmation states
    ========================================================================== */
 
 :root {
-  --ink: #f4f6f8;
-  --ink-raised: #eaedf1;
+  --ink: #ffffff;
+  --ink-raised: #eaf3fc;
   --panel: #ffffff;
-  --paper: #10151b;
-  --paper-dim: #57626c;
-  --copper: #d9711c;
-  --copper-bright: #ef8a35;
-  --trace: #0f9fdb;
-  --wire: #7c8790;
-  --wire-line: #e1e5e9;
+  --paper: #0b1626;
+  --paper-dim: #5b6b7c;
+  --copper: #f5821f;
+  --copper-bright: #ff9a3d;
+  --trace: #2f8fe0;
+  --trace-dark: #1c6cb3;
+  --wire: #7c8a99;
+  --wire-line: #e3eaf1;
   --danger: #cc3f2c;
+  --success: #1f9d55;
+  --success-bg: #e8f7ee;
 
   --font-display: var(--font-display-var), "Arial Narrow", sans-serif;
   --font-body: var(--font-body-var), "Segoe UI", sans-serif;
   --font-mono: var(--font-mono-var), "Courier New", monospace;
 
-  --container: 1120px;
-  --radius: 3px;
+  --container: 1180px;
+  --radius: 12px;
+  --radius-sm: 8px;
 }
 
 * {
@@ -180,7 +185,8 @@ button {
 
 .btn--copper {
   background: var(--copper);
-  color: var(--ink);
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(245, 130, 31, 0.25);
 }
 
 .btn--copper:hover {
@@ -190,10 +196,12 @@ button {
 .btn--ghost {
   border-color: var(--wire-line);
   color: var(--paper);
+  background: var(--panel);
 }
 
 .btn--ghost:hover {
   border-color: var(--trace);
+  color: var(--trace-dark);
 }
 
 /* ==========================================================================
