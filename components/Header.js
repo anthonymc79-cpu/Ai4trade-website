@@ -1,19 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import styles from "./Header.module.css";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.yourdomain.com";
-
-const PRODUCT_LINKS = [
-  { href: "/services", label: "Quoting & job management" },
-  { href: "/for-electricians", label: "EICR certification" },
-  { href: "/tutorials", label: "Customer portal" },
-];
-
-const RESOURCE_LINKS = [
-  { href: "/tutorials", label: "Tutorials" },
-  { href: "/pricing", label: "Pricing FAQs" },
-];
 
 export default function Header() {
   return (
@@ -21,70 +9,53 @@ export default function Header() {
       <div className="container">
         <div className={styles.bar}>
           <Link href="/" className={styles.logo}>
-            <Image
-              src="/logo.png"
-              alt="Ai4Trade"
-              width={48}
-              height={48}
+            <svg
               className={styles.logoMark}
-              priority
-            />
-            <span className={styles.logoWordmark}>
-              <span className={styles.logoAi}>Ai</span>
-              <span className={styles.logoNum}>4</span>
-              <span className={styles.logoTrade}>Trade</span>
-            </span>
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 4v6a2 2 0 0 0 2 2h4M20 20v-6a2 2 0 0 0-2-2h-4"
+                stroke="var(--copper-bright)"
+                strokeWidth="1.6"
+              />
+              <circle cx="4" cy="4" r="1.6" fill="var(--trace)" />
+              <circle cx="20" cy="20" r="1.6" fill="var(--trace)" />
+            </svg>
+            Ai4Trade
           </Link>
 
           <nav className={styles.nav}>
             <ul className={styles.navLinks}>
-              <li className={styles.hasMenu}>
-                <button type="button" className={styles.navBtn}>
-                  Product
-                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
-                    <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                  </svg>
-                </button>
-                <div className={styles.dropdown}>
-                  {PRODUCT_LINKS.map((item) => (
-                    <Link key={item.href} href={item.href}>
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
+              <li>
+                <Link href="/for-electricians">For electricians</Link>
               </li>
               <li>
-                <Link href="/for-electricians">For trades</Link>
+                <Link href="/services">For homeowners</Link>
+              </li>
+              <li>
+                <Link href="/tutorials">Tutorials</Link>
               </li>
               <li>
                 <Link href="/pricing">Pricing</Link>
               </li>
-              <li className={styles.hasMenu}>
-                <button type="button" className={styles.navBtn}>
-                  Resources
-                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
-                    <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                  </svg>
-                </button>
-                <div className={styles.dropdown}>
-                  {RESOURCE_LINKS.map((item) => (
-                    <Link key={item.href} href={item.href}>
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </li>
             </ul>
+            <div className={styles.actions}>
+              <a
+                className="btn btn--ghost"
+                href={`${APP_URL}/login`}
+              >
+                Log in
+              </a>
+              <a
+                className="btn btn--copper"
+                href="/signup/business"
+              >
+                Start subscription
+              </a>
+            </div>
           </nav>
-
-          <div className={styles.actions}>
-            <a className="btn btn--ghost" href={`${APP_URL}/login`}>
-              Log in
-            </a>
-            <a className="btn btn--copper" href="/signup/business">
-              Book a demo
-            </a>
-          </div>
         </div>
       </div>
     </header>

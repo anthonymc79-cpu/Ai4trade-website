@@ -1,42 +1,35 @@
 /* ==========================================================================
    Design tokens
    ==========================================================================
-   Palette pulled from the Ai4Trade logo: bright circuit-blue, an orange
-   accent, cool chrome-grey and a soft sky-blue wash behind the hero
-   dashboard — bright, product-led and light throughout.
-   --ink       page background — clean white
-   --ink-raised  soft sky-blue wash, used behind the hero/dashboard
+   Palette: a switchboard panel by daylight, not a moodboard.
+   --ink       page background — warm off-white, not stark white
+   --ink-raised  a touch deeper, for alternating panels
    --panel     card surface — clean white
-   --paper     primary text — near-black navy
-   --blue      the logo's circuit-blue — primary accent, links, icons
-   --copper    the logo's orange "4" — secondary accent, primary buttons
-   --wire      cool steel grey, secondary text and connecting lines
-   --success   positive metric deltas, confirmation states
+   --paper     primary text — deep navy-charcoal, not pure black
+   --copper    brass/copper accent — the colour of the wire itself
+   --trace     live-circuit teal, used for active states + the trace line
+   --wire      muted warm grey, secondary text and connecting lines
    ========================================================================== */
 
 :root {
-  --ink: #ffffff;
-  --ink-raised: #eaf3fc;
+  --ink: #f7f5ef;
+  --ink-raised: #efe9dd;
   --panel: #ffffff;
-  --paper: #0b1626;
-  --paper-dim: #5b6b7c;
-  --copper: #f5821f;
-  --copper-bright: #ff9a3d;
-  --trace: #2f8fe0;
-  --trace-dark: #1c6cb3;
-  --wire: #7c8a99;
-  --wire-line: #e3eaf1;
-  --danger: #cc3f2c;
-  --success: #1f9d55;
-  --success-bg: #e8f7ee;
+  --paper: #182530;
+  --paper-dim: #57626c;
+  --copper: #a85a2a;
+  --copper-bright: #c2703a;
+  --trace: #1f8f73;
+  --wire: #8a8477;
+  --wire-line: #e3dfd3;
+  --danger: #b23a22;
 
   --font-display: var(--font-display-var), "Arial Narrow", sans-serif;
   --font-body: var(--font-body-var), "Segoe UI", sans-serif;
   --font-mono: var(--font-mono-var), "Courier New", monospace;
 
-  --container: 1180px;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --container: 1120px;
+  --radius: 3px;
 }
 
 * {
@@ -124,13 +117,21 @@ button {
 }
 
 .eyebrow {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--trace-dark);
-  display: inline-block;
+  color: var(--copper-bright);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: var(--copper-bright);
 }
 
 .grid-2 {
@@ -177,8 +178,7 @@ button {
 
 .btn--copper {
   background: var(--copper);
-  color: #ffffff;
-  box-shadow: 0 1px 2px rgba(245, 130, 31, 0.25);
+  color: var(--ink);
 }
 
 .btn--copper:hover {
@@ -188,20 +188,19 @@ button {
 .btn--ghost {
   border-color: var(--wire-line);
   color: var(--paper);
-  background: var(--panel);
 }
 
 .btn--ghost:hover {
   border-color: var(--trace);
-  color: var(--trace-dark);
 }
 
 /* ==========================================================================
-   Signature element: the content card
+   Signature element: the cable tag
    --------------------------------------------------------------------------
-   The same rounded, bordered white card used for the homepage's feature
-   and comparison items — reused everywhere a feature, price, or tutorial
-   thumbnail needs a card. A colored label sits above the title.
+   Modelled on the identification tags electricians clip to cable runs and
+   consumer units — a punched hole at the top-left, a short lead line, and
+   a printed label. Used for every card-shaped unit on the site: features,
+   pricing tiers, tutorial thumbnails.
    ========================================================================== */
 
 .tag {
@@ -209,27 +208,39 @@ button {
   background: var(--panel);
   border: 1px solid var(--wire-line);
   border-radius: var(--radius);
-  padding: 26px 24px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  padding: 28px 24px 24px;
+  margin-top: 22px;
 }
 
-a.tag:hover {
-  border-color: var(--trace);
-  box-shadow: 0 12px 28px -12px rgba(11, 22, 38, 0.16);
-  transform: translateY(-2px);
+.tag::before {
+  content: "";
+  position: absolute;
+  top: -22px;
+  left: 22px;
+  width: 1px;
+  height: 22px;
+  background: var(--wire-line);
+}
+
+.tag::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 1px solid var(--wire-line);
 }
 
 .tag__code {
-  font-family: var(--font-body);
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--trace-dark);
-  background: var(--ink-raised);
-  letter-spacing: 0.03em;
-  display: inline-block;
-  padding: 3px 9px;
-  border-radius: 6px;
-  margin-bottom: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--wire);
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 10px;
 }
 
 .tag__title {
@@ -265,7 +276,7 @@ a.tag:hover {
   width: 100%;
   background: var(--panel);
   border: 1px solid var(--wire-line);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   padding: 12px 14px;
   color: var(--paper);
   font-family: var(--font-body);
@@ -288,7 +299,7 @@ a.tag:hover {
   background: rgba(193, 81, 47, 0.12);
   border: 1px solid var(--danger);
   color: var(--paper);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   padding: 12px 14px;
   font-size: 14px;
   margin-bottom: 20px;
@@ -336,5 +347,5 @@ a.tag:hover {
   height: 8px;
   border-radius: 50%;
   background: var(--trace);
-  box-shadow: 0 0 8px 1px rgba(15, 159, 219, 0.35);
+  box-shadow: 0 0 8px 1px rgba(31, 143, 115, 0.35);
 }

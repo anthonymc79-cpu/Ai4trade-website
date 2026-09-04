@@ -1,6 +1,4 @@
-import { projectAllHmrEvents } from "next/dist/build/swc/generated-native";
 import styles from "../for-electricians/ForElectricians.module.css";
-import { CheckoutButton } from "@/components/CheckoutButton";
 
 export const metadata = {
   title: "Pricing — Ai4Trade",
@@ -11,8 +9,8 @@ export const metadata = {
 export const revalidate = 3600;
 
 const PRICES = {
-  GBP: { symbol: "£", starter: 29, pro: 79 },
-  USD: { symbol: "$", starter: 35, pro: 95 },
+  GBP: { symbol: "£", starter: 29, team: 79 },
+  USD: { symbol: "$", starter: 35, team: 95 },
 };
 
 export default async function PricingPage({ searchParams }) {
@@ -51,15 +49,14 @@ export default async function PricingPage({ searchParams }) {
                 paper and spreadsheets. Unlimited jobs, quoting, EICR
                 certificates, and your own branded portal.
               </p>
-              <CheckoutButton plan="starter" />
             </div>
 
             <div className="tag">
-              <span className="tag__code">TIER · PRO</span>
-              <h3 className="tag__title">Pro</h3>
+              <span className="tag__code">TIER · TEAM</span>
+              <h3 className="tag__title">Team</h3>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: 32, margin: "8px 0 14px" }}>
                 {p.symbol}
-                {p.pro}
+                {p.team}
                 <span style={{ fontSize: 14, color: "var(--wire)" }}>/month</span>
               </p>
               <p className="tag__body">
@@ -67,7 +64,6 @@ export default async function PricingPage({ searchParams }) {
                 automated quoting rules, and priority support — for
                 businesses with more than one engineer on the road.
               </p>
-              <CheckoutButton plan="pro" />
             </div>
           </div>
         </div>

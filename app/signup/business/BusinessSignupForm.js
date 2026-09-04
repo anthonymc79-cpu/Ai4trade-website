@@ -136,7 +136,7 @@ export default function BusinessSignupForm() {
                 width: "100%",
                 background: "var(--panel)",
                 border: "1px solid var(--wire-line)",
-                borderRadius: "var(--radius-sm)",
+                borderRadius: "3px",
                 padding: "12px 14px",
                 color: "var(--paper)",
                 fontFamily: "var(--font-body)",
