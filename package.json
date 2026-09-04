@@ -12,11 +12,11 @@
     "deploy": "npm run build:worker && wrangler deploy"
   },
   "dependencies": {
-    "next": "^15.5.18",
+    "@supabase/ssr": "^0.5.1",
+    "@supabase/supabase-js": "^2.45.4",
+    "next": "^16.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@supabase/supabase-js": "^2.45.4",
-    "@supabase/ssr": "^0.5.1",
     "stripe": "^16.9.0"
   },
   "devDependencies": {
