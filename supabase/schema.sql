@@ -1,72 +1,58 @@
 -- supabase/schema.sql
 --
--- Reference schema for the multi-tenant shape discussed: you (master admin)
--- own the platform; each row in `businesses` is a subscribing electrical
--- business; each row in `customers` is a homeowner who belongs to exactly
--- one business. Run this in the Supabase SQL editor, adjusting to fit
--- whatever already exists in your project.
+-- REFERENCE ONLY — documents the shape of tables that already exist in
+-- the Supabase project (created for/by app.js). Do not run this as a
+-- migration; there are no CREATE TABLE statements here on purpose, since
+-- re-running them against the live database risks conflicting with
+-- app.js's own assumptions about these tables. If a column listed here is
+-- ever missing, add it with a targeted ALTER TABLE instead of recreating
+-- the table.
+--
+-- An earlier version of this file described an invented `businesses` /
+-- `customers` multi-tenant schema that the marketing site's signup routes
+-- used to write to. That schema was never what app.js actually reads —
+-- app.js uses `profiles` + `admin_links`, documented below — so it's been
+-- removed along with the signup code that wrote to it.
 
 -- ---------------------------------------------------------------------------
--- businesses: one row per subscribing tenant
+-- profiles: one row per Supabase auth user (both admins and their
+-- customers). Populated/read throughout app.js.
 -- ---------------------------------------------------------------------------
-create table if not exists businesses (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  slug text not null unique,                 -- used for sparky-ltd.yourdomain.com
-  owner_user_id uuid not null references auth.users (id) on delete cascade,
-  subscription_status text not null default 'pending'
-    check (subscription_status in ('pending', 'active', 'past_due', 'cancelled')),
-  stripe_customer_id text,
-  stripe_subscription_id text,
-  created_at timestamptz not null default now()
-);
-
-create index if not exists businesses_owner_idx on businesses (owner_user_id);
-create index if not exists businesses_slug_idx on businesses (slug);
-
--- ---------------------------------------------------------------------------
--- customers: one row per homeowner, scoped to a single business
--- ---------------------------------------------------------------------------
-create table if not exists customers (
-  id uuid primary key default gen_random_uuid(),
-  business_id uuid not null references businesses (id) on delete cascade,
-  user_id uuid not null references auth.users (id) on delete cascade,
-  full_name text,
-  created_at timestamptz not null default now(),
-  unique (business_id, user_id)
-);
-
-create index if not exists customers_business_idx on customers (business_id);
+-- id            uuid primary key, references auth.users(id)
+-- name          text                    -- person's name
+-- username      text                    -- their email
+-- role          text                    -- 'admin' | 'customer' | 'master_admin' | 'admin_removed'
+-- plan          text                    -- 'trial' | 'starter' | 'pro' | 'annual' (= Pro billed
+--                                          annually) | 'pro_ai' | 'pro_ai_annual' | 'agency' |
+--                                          'agency_annual' — see PLAN_ORDER_ALL/PLAN_FEATURES in
+--                                          app.js. Only 'trial', 'starter', 'pro' and 'annual' are
+--                                          reachable through the marketing site today; pro_ai/agency
+--                                          are hidden (HIDDEN_TIERS) while still being built.
+-- plan_active   boolean                 -- whether `plan` is currently paid-for/in-trial and should
+--                                          be honoured. Kept in sync with Stripe by
+--                                          app/api/webhooks/stripe/route.js.
+-- parent_admin  uuid, references profiles(id), null for admins
+--                                          -- set only on role:'customer' rows: which admin's portal
+--                                          they registered through.
+-- phone         text, nullable
 
 -- ---------------------------------------------------------------------------
--- Row Level Security
+-- admin_links: one row per admin, their branded booking-portal slug
+-- (e.g. sparky-ltd.ai4trade.co.uk). Looked up by app.js's
+-- resolveAdminBySlug() and by app/api/signup/customer/route.js.
 -- ---------------------------------------------------------------------------
-alter table businesses enable row level security;
-alter table customers enable row level security;
+-- admin_id      uuid primary key, references profiles(id)
+-- slug          text unique
+-- locked        boolean                 -- true once the admin has manually chosen/confirmed it
 
--- A business admin can read/update only their own business row.
-create policy "business admins read own business"
-  on businesses for select
-  using (owner_user_id = auth.uid());
-
-create policy "business admins update own business"
-  on businesses for update
-  using (owner_user_id = auth.uid());
-
--- A customer can read only their own customer row.
-create policy "customers read own record"
-  on customers for select
-  using (user_id = auth.uid());
-
--- A business admin can read the customer records belonging to their business.
-create policy "business admins read own customers"
-  on customers for select
-  using (
-    business_id in (
-      select id from businesses where owner_user_id = auth.uid()
-    )
-  );
-
--- Inserts happen exclusively through the service-role API routes
--- (app/api/signup/*), which bypass RLS deliberately — do not add a public
--- insert policy here.
+-- ---------------------------------------------------------------------------
+-- subscriptions: Stripe billing record per admin — see the column list in
+-- the project's task notes (id, admin_id, plan_id, billing_cycle, status,
+-- ai_addon, ai_minutes_included, current_period_start/end, trial_end,
+-- cancelled_at, grace_period_end, stripe_customer_id,
+-- stripe_subscription_id, stripe_addon_sub_id, stripe_price_id,
+-- created_at, updated_at). Written by app/api/signup/business/route.js
+-- (initial trial row) and app/api/webhooks/stripe/route.js (kept in sync
+-- with Stripe). This table is the billing audit trail; `profiles.plan` /
+-- `plan_active` is what app.js itself actually gates on, so the webhook
+-- updates both.

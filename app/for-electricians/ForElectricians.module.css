@@ -1,11 +1,13 @@
 .hero {
-  padding: 80px 0 20px;
+  background: var(--ink-raised);
+  padding: 64px 0 56px;
 }
 
 .heroTitle {
   font-size: clamp(32px, 4.5vw, 48px);
   max-width: 760px;
   margin: 18px 0 20px;
+  color: var(--paper);
 }
 
 .heroLead {
@@ -34,10 +36,10 @@
 .portalUrl {
   font-family: var(--font-mono);
   font-size: 15px;
-  color: var(--trace);
-  background: var(--ink);
+  color: var(--trace-dark);
+  background: var(--ink-raised);
   border: 1px solid var(--wire-line);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   padding: 10px 14px;
   display: inline-block;
   margin-top: 14px;

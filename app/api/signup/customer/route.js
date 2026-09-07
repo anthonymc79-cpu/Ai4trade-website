@@ -1,9 +1,10 @@
 // app/api/signup/customer/route.js
 //
 // Free signup — no Stripe involved. A customer always belongs to exactly
-// one business, identified by the portal slug they signed up through
-// (e.g. arriving via sparky-ltd.yourdomain.com, or picking it from a list
-// on the marketing site).
+// one admin (electrician), resolved from the portal slug they signed up
+// through (e.g. arriving via sparky-ltd.ai4trade.co.uk, or picking it from
+// a list on the marketing site). Mirrors app.js's own resolveAdminBySlug +
+// profiles.parent_admin model (admin_links.slug -> profiles.role:'customer').
 
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -24,18 +25,24 @@ export async function POST(request) {
 
   const supabase = createAdminClient();
 
-  const { data: business, error: businessLookupError } = await supabase
-    .from("businesses")
-    .select("id, name")
+  const { data: link, error: linkLookupError } = await supabase
+    .from("admin_links")
+    .select("admin_id")
     .eq("slug", businessSlug)
     .maybeSingle();
 
-  if (businessLookupError || !business) {
+  if (linkLookupError || !link) {
     return Response.json(
       { error: "We couldn't find that business" },
       { status: 404 }
     );
   }
+
+  const { data: adminProfile } = await supabase
+    .from("profiles")
+    .select("name")
+    .eq("id", link.admin_id)
+    .maybeSingle();
 
   const { data: created, error: createUserError } =
     await supabase.auth.admin.createUser({
@@ -57,13 +64,15 @@ export async function POST(request) {
     );
   }
 
-  const { error: customerError } = await supabase.from("customers").insert({
-    business_id: business.id,
-    user_id: created.user.id,
-    full_name: fullName || null,
+  const { error: profileError } = await supabase.from("profiles").upsert({
+    id: created.user.id,
+    name: fullName || null,
+    username: email,
+    role: "customer",
+    parent_admin: link.admin_id,
   });
 
-  if (customerError) {
+  if (profileError) {
     await supabase.auth.admin.deleteUser(created.user.id);
     return Response.json(
       { error: "Could not create customer record" },
@@ -71,5 +80,5 @@ export async function POST(request) {
     );
   }
 
-  return Response.json({ success: true, businessName: business.name });
+  return Response.json({ success: true, businessName: adminProfile?.name || "your electrician" });
 }

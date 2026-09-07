@@ -1,10 +1,12 @@
 import styles from "../for-electricians/ForElectricians.module.css";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Get electrical work done — Ai4Trade",
   description:
     "Book a free enquiry with an electrician using Ai4Trade, track your job, and keep every certificate in one place.",
-};
+  path: "/services",
+});
 
 const SERVICES = [
   {

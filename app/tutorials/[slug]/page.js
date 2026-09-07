@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTutorialBySlug, getTutorials } from "@/lib/tutorials";
 import { getCurrentUser } from "@/lib/auth";
 import VideoPlayer from "@/components/VideoPlayer";
+import { pageMetadata } from "@/lib/seo";
 
 // Rebuild each tutorial page at most once an hour — picks up edits (new
 // video, corrected steps) without a full site rebuild.
@@ -17,10 +18,11 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const tutorial = await getTutorialBySlug(slug);
   if (!tutorial) return {};
-  return {
+  return pageMetadata({
     title: `${tutorial.title} — Ai4Trade tutorials`,
     description: tutorial.description,
-  };
+    path: `/tutorials/${slug}`,
+  });
 }
 
 export default async function TutorialPage({ params }) {

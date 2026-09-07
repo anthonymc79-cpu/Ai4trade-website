@@ -25,8 +25,14 @@ const monoFont = IBM_Plex_Mono({
   display: "swap",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ai4trade.co.uk";
+
 export const metadata = {
-  title: "Ai4Trade — job management for electrical businesses",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Ai4Trade — job management for electrical businesses",
+    template: "%s",
+  },
   description:
     "Quoting, EICR certification, floorplans, and job management for electrical businesses — with a free booking portal for their customers.",
   // Keeps the site out of Google while it's still being tested. Set
@@ -39,12 +45,26 @@ export const metadata = {
       : { index: false, follow: false },
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Ai4Trade",
+  url: SITE_URL,
+  logo: `${SITE_URL}/logo.png`,
+  description:
+    "Job management, quoting, EICR certification, and a free customer booking portal for electrical businesses.",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
         className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <CircuitTrace />
         <Header />
         <main>{children}</main>

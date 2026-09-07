@@ -1,11 +1,13 @@
 import Link from "next/link";
 import styles from "./ForElectricians.module.css";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Ai4Trade for electrical businesses",
   description:
     "Job management, quoting, EICR certification, and a free branded customer portal — for electrical businesses of any size.",
-};
+  path: "/for-electricians",
+});
 
 const FEATURES = [
   {
@@ -29,9 +31,9 @@ const FEATURES = [
     body: "Sketch circuits on site on a tablet, and turn them into a floorplan the whole team can reference on the next visit.",
   },
   {
-    code: "TEA-05",
-    title: "Team roles and permissions",
-    body: "Control what each engineer, office admin, or subcontractor can see and edit as your team grows past two people.",
+    code: "AUT-05",
+    title: "Automation and custom branding",
+    body: "Push every stage of a job to your own CRM or spreadsheet via webhooks, export your data as CSV any time, and put your own branding on your portal and certificates — all on Pro.",
   },
   {
     code: "SUB-06",

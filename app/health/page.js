@@ -1,4 +1,5 @@
 import styles from "./Health.module.css";
+import { pageMetadata } from "@/lib/seo";
 
 /**
  * SECURITY NOTE — read this before changing STATUS_API_URL below.
@@ -20,11 +21,12 @@ import styles from "./Health.module.css";
  */
 const STATUS_API_URL = "https://ai4trade-status.ai4trade.workers.dev/api/status";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "System Status — Ai4Trade",
   description: "Live status of every service Ai4Trade depends on.",
-  robots: { index: false, follow: false }, // status pages don't need to rank in search
-};
+  path: "/health",
+  noindex: true, // status pages don't need to rank in search
+});
 
 // Always fetch fresh — never serve a cached/stale status page.
 export const dynamic = "force-dynamic";

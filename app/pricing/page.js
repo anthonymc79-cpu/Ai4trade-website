@@ -1,25 +1,66 @@
 import styles from "../for-electricians/ForElectricians.module.css";
+import PricingCards from "@/components/PricingCards";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Pricing — Ai4Trade",
-};
+  description:
+    "Simple monthly or annual pricing for electrical business job management, quoting, and EICR certification. Starter from £29/month, Pro from £59/month billed annually. Free for every customer who books through you.",
+  path: "/pricing",
+});
 
 // Rebuilt at most once an hour — pricing rarely changes, so this avoids a
 // full redeploy while still staying static and fast the rest of the time.
 export const revalidate = 3600;
 
-const PRICES = {
-  GBP: { symbol: "£", starter: 29, team: 79 },
-  USD: { symbol: "$", starter: 35, team: 95 },
-};
+// Kept in sync with app.js's own MA_PLANS/ANNUAL_PRICES — that file is
+// the source of truth for what each plan actually costs. GBP only — this
+// is a UK-based business and app.js itself has no other currency.
+const PRICES = { symbol: "£", starter: 29, proMonthly: 69, proAnnualMonthly: 59, proAnnualTotal: 708 };
 
-export default async function PricingPage({ searchParams }) {
-  const params = await searchParams;
-  const currency = params?.currency === "USD" ? "USD" : "GBP";
-  const p = PRICES[currency];
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ai4trade.co.uk";
 
+function pricingJsonLd(prices) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Ai4Trade",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    url: `${SITE_URL}/pricing`,
+    offers: [
+      {
+        "@type": "Offer",
+        name: "Starter",
+        price: String(prices.starter),
+        priceCurrency: "GBP",
+        billingDuration: "P1M",
+      },
+      {
+        "@type": "Offer",
+        name: "Pro (monthly)",
+        price: String(prices.proMonthly),
+        priceCurrency: "GBP",
+        billingDuration: "P1M",
+      },
+      {
+        "@type": "Offer",
+        name: "Pro (annual)",
+        price: String(prices.proAnnualTotal),
+        priceCurrency: "GBP",
+        billingDuration: "P1Y",
+      },
+    ],
+  };
+}
+
+export default function PricingPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingJsonLd(PRICES)) }}
+      />
       <section className={styles.hero}>
         <div className="container">
           <span className="eyebrow">Pricing</span>
@@ -27,45 +68,14 @@ export default async function PricingPage({ searchParams }) {
             One subscription per business. Free for every customer.
           </h1>
           <p className={styles.heroLead}>
-            Prices shown in {currency === "GBP" ? "GBP" : "USD"} based on
-            your location — switch anytime after signing up.
+            All prices in GBP. No hidden fees, cancel anytime.
           </p>
         </div>
       </section>
 
       <section className="section">
         <div className="container">
-          <div className="grid-2">
-            <div className="tag">
-              <span className="tag__code">TIER · STARTER</span>
-              <h3 className="tag__title">Starter</h3>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: 32, margin: "8px 0 14px" }}>
-                {p.symbol}
-                {p.starter}
-                <span style={{ fontSize: 14, color: "var(--wire)" }}>/month</span>
-              </p>
-              <p className="tag__body">
-                For a single electrician or a small team just getting off
-                paper and spreadsheets. Unlimited jobs, quoting, EICR
-                certificates, and your own branded portal.
-              </p>
-            </div>
-
-            <div className="tag">
-              <span className="tag__code">TIER · TEAM</span>
-              <h3 className="tag__title">Team</h3>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: 32, margin: "8px 0 14px" }}>
-                {p.symbol}
-                {p.team}
-                <span style={{ fontSize: 14, color: "var(--wire)" }}>/month</span>
-              </p>
-              <p className="tag__body">
-                Everything in Starter, plus team roles and permissions,
-                automated quoting rules, and priority support — for
-                businesses with more than one engineer on the road.
-              </p>
-            </div>
-          </div>
+          <PricingCards prices={PRICES} />
         </div>
       </section>
 

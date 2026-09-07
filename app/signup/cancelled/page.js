@@ -1,9 +1,13 @@
 import Link from "next/link";
 import styles from "../../for-electricians/ForElectricians.module.css";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Checkout cancelled — Ai4Trade",
-};
+  description: "Your Ai4Trade checkout was cancelled — no payment was taken.",
+  path: "/signup/cancelled",
+  noindex: true,
+});
 
 export default function SignupCancelledPage() {
   return (

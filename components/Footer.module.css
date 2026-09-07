@@ -21,11 +21,21 @@
 }
 
 .brandName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-display);
   font-size: 17px;
+  font-weight: 700;
   color: var(--paper);
-  margin-bottom: 8px;
-  display: block;
+  margin-bottom: 10px;
+}
+
+.brandMark {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .cols {

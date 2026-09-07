@@ -1,10 +1,14 @@
 import Link from "next/link";
 import styles from "../for-electricians/ForElectricians.module.css";
 import { getTutorials } from "@/lib/tutorials";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Tutorials — Ai4Trade",
-};
+  description:
+    "Learn Ai4Trade by watching it work — short videos from your first job to advanced quoting rules.",
+  path: "/tutorials",
+});
 
 // Rebuild this listing at most once every hour, picking up new tutorials
 // without a full site redeploy.

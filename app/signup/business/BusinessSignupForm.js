@@ -1,36 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import styles from "../../for-electricians/ForElectricians.module.css";
 
-function slugify(value) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
+const PLANS = [
+  { id: "trial", label: "7-day free trial — no card required" },
+  { id: "starter", label: "Starter — £29/month" },
+  { id: "pro", label: "Pro — from £59/month" },
+];
 
 export default function BusinessSignupForm() {
+  const searchParams = useSearchParams();
+  const initialPlan = PLANS.some((p) => p.id === searchParams.get("plan"))
+    ? searchParams.get("plan")
+    : "trial";
+  const initialBilling = searchParams.get("billing") === "annual" ? "annual" : "monthly";
+
   const [form, setForm] = useState({
-    businessName: "",
-    slug: "",
+    name: "",
     email: "",
     password: "",
-    plan: "starter",
+    plan: initialPlan,
+    billingCycle: initialBilling,
   });
-  const [slugTouched, setSlugTouched] = useState(false);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   function updateField(field, value) {
-    setForm((prev) => {
-      const next = { ...prev, [field]: value };
-      if (field === "businessName" && !slugTouched) {
-        next.slug = slugify(value);
-      }
-      return next;
-    });
+    setForm((prev) => ({ ...prev, [field]: value }));
   }
 
   async function handleSubmit(e) {
@@ -52,8 +50,8 @@ export default function BusinessSignupForm() {
         return;
       }
 
-      // Off to Stripe Checkout — the business becomes active once the
-      // webhook confirms payment, not before.
+      // Trial signups go straight to the app; paid plans go to Stripe
+      // Checkout first — either way the server tells us where to go.
       window.location.href = data.url;
     } catch {
       setError("Something went wrong. Please try again.");
@@ -64,42 +62,26 @@ export default function BusinessSignupForm() {
   return (
     <section className={styles.hero}>
       <div className="container">
-        <span className="eyebrow">Start your subscription</span>
-        <h1 className={styles.heroTitle}>Set up your business</h1>
+        <span className="eyebrow">Get started</span>
+        <h1 className={styles.heroTitle}>Set up your account</h1>
         <p className={styles.heroLead}>
-          Takes about a minute. You'll pick a plan and enter payment details
-          next, on Stripe's secure checkout.
+          Takes about a minute. Paid plans continue to Stripe's secure
+          checkout next — the free trial needs no card at all.
         </p>
 
         <form onSubmit={handleSubmit} className="formCard">
           {error && <div className="formError">{error}</div>}
 
           <div className="field">
-            <label htmlFor="businessName">Business name</label>
+            <label htmlFor="name">Your name</label>
             <input
-              id="businessName"
+              id="name"
               type="text"
               required
-              value={form.businessName}
-              onChange={(e) => updateField("businessName", e.target.value)}
-              placeholder="Sparky Ltd"
+              value={form.name}
+              onChange={(e) => updateField("name", e.target.value)}
+              placeholder="Dave Sparks"
             />
-          </div>
-
-          <div className="field">
-            <label htmlFor="slug">Your portal address</label>
-            <input
-              id="slug"
-              type="text"
-              required
-              value={form.slug}
-              onChange={(e) => {
-                setSlugTouched(true);
-                updateField("slug", slugify(e.target.value));
-              }}
-              placeholder="sparky-ltd"
-            />
-            <small>{form.slug || "sparky-ltd"}.ai4trade.app</small>
           </div>
 
           <div className="field">
@@ -136,17 +118,44 @@ export default function BusinessSignupForm() {
                 width: "100%",
                 background: "var(--panel)",
                 border: "1px solid var(--wire-line)",
-                borderRadius: "3px",
+                borderRadius: "var(--radius-sm)",
                 padding: "12px 14px",
                 color: "var(--paper)",
                 fontFamily: "var(--font-body)",
                 fontSize: "15px",
               }}
             >
-              <option value="starter">Starter — £29/month</option>
-              <option value="team">Team — £79/month</option>
+              {PLANS.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
+                </option>
+              ))}
             </select>
           </div>
+
+          {form.plan === "pro" && (
+            <div className="field">
+              <label htmlFor="billingCycle">Billing</label>
+              <select
+                id="billingCycle"
+                value={form.billingCycle}
+                onChange={(e) => updateField("billingCycle", e.target.value)}
+                style={{
+                  width: "100%",
+                  background: "var(--panel)",
+                  border: "1px solid var(--wire-line)",
+                  borderRadius: "var(--radius-sm)",
+                  padding: "12px 14px",
+                  color: "var(--paper)",
+                  fontFamily: "var(--font-body)",
+                  fontSize: "15px",
+                }}
+              >
+                <option value="monthly">Monthly — £69/month</option>
+                <option value="annual">Annual — £708/year (£59/month, save ~15%)</option>
+              </select>
+            </div>
+          )}
 
           <button
             type="submit"
@@ -154,7 +163,11 @@ export default function BusinessSignupForm() {
             disabled={submitting}
             style={{ width: "100%", justifyContent: "center" }}
           >
-            {submitting ? "Setting up…" : "Continue to payment →"}
+            {submitting
+              ? "Setting up…"
+              : form.plan === "trial"
+              ? "Start free trial →"
+              : "Continue to payment →"}
           </button>
         </form>
       </div>

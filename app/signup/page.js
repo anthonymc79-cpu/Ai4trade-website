@@ -1,9 +1,13 @@
 import Link from "next/link";
 import styles from "../for-electricians/ForElectricians.module.css";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Sign up — Ai4Trade",
-};
+  description:
+    "Start an Ai4Trade subscription for your electrical business, or register for free to book a job with your electrician.",
+  path: "/signup",
+});
 
 export default function SignupChooserPage() {
   return (

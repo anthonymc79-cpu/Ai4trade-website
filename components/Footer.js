@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -7,7 +8,16 @@ export default function Footer() {
       <div className="container">
         <div className={styles.row}>
           <div className={styles.brand}>
-            <span className={styles.brandName}>Ai4Trade</span>
+            <span className={styles.brandName}>
+              <Image
+                src="/logo.png"
+                alt="Ai4Trade"
+                width={32}
+                height={32}
+                className={styles.brandMark}
+              />
+              Ai4Trade
+            </span>
             Job management, quoting, and certification for electrical
             businesses — built by people who've stood in a fuse cupboard
             at 5pm on a Friday.

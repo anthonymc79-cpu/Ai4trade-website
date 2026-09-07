@@ -1,8 +1,12 @@
 import styles from "../../for-electricians/ForElectricians.module.css";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Subscription started — Ai4Trade",
-};
+  description: "Your Ai4Trade payment was confirmed and your account is being activated.",
+  path: "/signup/success",
+  noindex: true,
+});
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.yourdomain.com";
 
