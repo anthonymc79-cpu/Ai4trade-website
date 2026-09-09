@@ -74,7 +74,7 @@ export default function ForElectriciansPage() {
             {FEATURES.map((f) => (
               <div className="tag" key={f.code}>
                 <span className="tag__code">{f.code}</span>
-                <h3 className="tag__title">{f.title}</h3>
+                <h2 className="tag__title">{f.title}</h2>
                 <p className="tag__body">{f.body}</p>
               </div>
             ))}

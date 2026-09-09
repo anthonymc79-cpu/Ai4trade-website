@@ -54,7 +54,7 @@ export default function ServicesPage() {
             {SERVICES.map((s) => (
               <div className="tag" key={s.code}>
                 <span className="tag__code">{s.code}</span>
-                <h3 className="tag__title">{s.title}</h3>
+                <h2 className="tag__title">{s.title}</h2>
                 <p className="tag__body">{s.body}</p>
               </div>
             ))}

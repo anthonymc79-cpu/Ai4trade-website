@@ -47,7 +47,7 @@ export default async function TutorialsPage() {
                     <span style={{ color: "var(--copper-bright)" }}> · PRO</span>
                   )}
                 </span>
-                <h3 className="tag__title">{t.title}</h3>
+                <h2 className="tag__title">{t.title}</h2>
                 <p className="tag__body">{t.description}</p>
               </Link>
             ))}

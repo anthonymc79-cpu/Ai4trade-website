@@ -197,7 +197,7 @@ export default function HomePage() {
             {FEATURES.map((f) => (
               <div className={styles.featureCard} key={f.title}>
                 <div className={styles.featureIcon}>{f.icon}</div>
-                <h3 className={styles.featureTitle}>{f.title}</h3>
+                <h2 className={styles.featureTitle}>{f.title}</h2>
                 <p className={styles.featureBody}>{f.body}</p>
               </div>
             ))}
@@ -222,7 +222,7 @@ export default function HomePage() {
                   <div className={styles.compareItem} key={item.title}>
                     <div className={styles.compareItemIcon}>{item.icon}</div>
                     <div>
-                      <h4 className={styles.compareItemTitle}>{item.title}</h4>
+                      <h3 className={styles.compareItemTitle}>{item.title}</h3>
                       <p className={styles.compareItemBody}>{item.body}</p>
                     </div>
                   </div>
@@ -250,7 +250,7 @@ export default function HomePage() {
                       {item.icon}
                     </div>
                     <div>
-                      <h4 className={styles.compareItemTitle}>{item.title}</h4>
+                      <h3 className={styles.compareItemTitle}>{item.title}</h3>
                       <p className={styles.compareItemBody}>{item.body}</p>
                     </div>
                   </div>

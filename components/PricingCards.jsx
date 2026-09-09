@@ -15,7 +15,7 @@ export default function PricingCards({ prices }) {
       <div className="grid-2">
         <div className="tag">
           <span className="tag__code">TIER · STARTER</span>
-          <h3 className="tag__title">Starter</h3>
+          <h2 className="tag__title">Starter</h2>
           <p style={{ fontFamily: "var(--font-mono)", fontSize: 32, margin: "8px 0 14px" }}>
             {prices.symbol}
             {prices.starter}
@@ -33,7 +33,7 @@ export default function PricingCards({ prices }) {
 
         <div className="tag">
           <span className="tag__code">TIER · PRO</span>
-          <h3 className="tag__title">Pro</h3>
+          <h2 className="tag__title">Pro</h2>
           <p style={{ fontFamily: "var(--font-mono)", fontSize: 32, margin: "8px 0 14px" }}>
             {prices.symbol}
             {proPrice}

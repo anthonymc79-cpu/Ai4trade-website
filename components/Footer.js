@@ -25,7 +25,7 @@ export default function Footer() {
 
           <div className={styles.cols}>
             <div className={styles.col}>
-              <h4>Product</h4>
+              <p className={styles.colLabel}>Product</p>
               <ul>
                 <li>
                   <Link href="/for-electricians">For electricians</Link>
@@ -39,7 +39,7 @@ export default function Footer() {
               </ul>
             </div>
             <div className={styles.col}>
-              <h4>Homeowners</h4>
+              <p className={styles.colLabel}>Homeowners</p>
               <ul>
                 <li>
                   <Link href="/services">Get a quote</Link>
@@ -50,7 +50,7 @@ export default function Footer() {
               </ul>
             </div>
             <div className={styles.col}>
-              <h4>Company</h4>
+              <p className={styles.colLabel}>Company</p>
               <ul>
                 <li>
                   <a href="mailto:hello@ai4trade.example">Contact</a>
