@@ -26,30 +26,35 @@ export async function GET(req) {
     return NextResponse.redirect(`${siteUrl}/pricing?error=invalid-plan`);
   }
 
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    return NextResponse.redirect(`${siteUrl}/signup/business?plan=${plan}&billing=${billingCycle}`);
+    if (!user) {
+      return NextResponse.redirect(`${siteUrl}/signup/business?plan=${plan}&billing=${billingCycle}`);
+    }
+
+    const metadata = {
+      admin_id: user.id,
+      plan: planIdFor(plan, billingCycle),
+      billing_cycle: billingCycle,
+    };
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      payment_method_types: ["card"],
+      line_items: [{ price: priceId, quantity: 1 }],
+      customer_email: user.email,
+      client_reference_id: user.id,
+      metadata,
+      subscription_data: { metadata },
+      success_url: `${siteUrl}/signup/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/pricing?canceled=true`,
+    });
+
+    return NextResponse.redirect(session.url, { status: 303 });
+  } catch (err) {
+    console.error("checkout/redirect failed:", err);
+    return NextResponse.redirect(`${siteUrl}/pricing?error=server`);
   }
-
-  const metadata = {
-    admin_id: user.id,
-    plan: planIdFor(plan, billingCycle),
-    billing_cycle: billingCycle,
-  };
-
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    payment_method_types: ["card"],
-    line_items: [{ price: priceId, quantity: 1 }],
-    customer_email: user.email,
-    client_reference_id: user.id,
-    metadata,
-    subscription_data: { metadata },
-    success_url: `${siteUrl}/signup/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${siteUrl}/pricing?canceled=true`,
-  });
-
-  return NextResponse.redirect(session.url, { status: 303 });
 }

@@ -69,82 +69,90 @@ export async function POST(request) {
     }
   }
 
-  const supabase = createAdminClient();
+  try {
+    const supabase = createAdminClient();
 
-  const { data: created, error: createUserError } =
-    await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
+    const { data: created, error: createUserError } =
+      await supabase.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+      });
+
+    if (createUserError) {
+      const status = createUserError.status === 422 ? 409 : 500;
+      return Response.json(
+        {
+          error:
+            createUserError.status === 422
+              ? "An account with that email already exists"
+              : "Could not create account",
+        },
+        { status }
+      );
+    }
+
+    const userId = created.user.id;
+
+    const { error: profileError } = await supabase.from("profiles").upsert({
+      id: userId,
+      name,
+      username: email,
+      role: "admin",
+      plan: "trial",
+      plan_active: true,
     });
 
-  if (createUserError) {
-    const status = createUserError.status === 422 ? 409 : 500;
+    if (profileError) {
+      await supabase.auth.admin.deleteUser(userId);
+      return Response.json(
+        { error: "Could not create account profile" },
+        { status: 500 }
+      );
+    }
+
+    const slug = await uniqueSlug(supabase, slugify(name) || slugify(email.split("@")[0]));
+    await supabase.from("admin_links").upsert({ admin_id: userId, slug });
+
+    const trialEnd = new Date(Date.now() + TRIAL_DAYS * 86400000).toISOString();
+    await supabase.from("subscriptions").insert({
+      admin_id: userId,
+      plan_id: "trial",
+      billing_cycle: "monthly",
+      status: "trialing",
+      trial_end: trialEnd,
+    });
+
+    if (plan === "trial") {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.ai4trade.co.uk";
+      return Response.json({ url: `${appUrl}/login?welcome=1` });
+    }
+
+    const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL;
+    const metadata = {
+      admin_id: userId,
+      plan: planIdFor(plan, billingCycle),
+      billing_cycle: billingCycle,
+    };
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      payment_method_types: ["card"],
+      customer_email: email,
+      client_reference_id: userId,
+      line_items: [{ price: priceId, quantity: 1 }],
+      metadata,
+      subscription_data: { metadata },
+      success_url: `${origin}/signup/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/signup/cancelled`,
+    });
+
+    return Response.json({ url: session.url });
+  } catch (err) {
+    console.error("signup/business failed:", err);
     return Response.json(
-      {
-        error:
-          createUserError.status === 422
-            ? "An account with that email already exists"
-            : "Could not create account",
-      },
-      { status }
-    );
-  }
-
-  const userId = created.user.id;
-
-  const { error: profileError } = await supabase.from("profiles").upsert({
-    id: userId,
-    name,
-    username: email,
-    role: "admin",
-    plan: "trial",
-    plan_active: true,
-  });
-
-  if (profileError) {
-    await supabase.auth.admin.deleteUser(userId);
-    return Response.json(
-      { error: "Could not create account profile" },
+      { error: "Something went wrong. Please try again." },
       { status: 500 }
     );
   }
-
-  const slug = await uniqueSlug(supabase, slugify(name) || slugify(email.split("@")[0]));
-  await supabase.from("admin_links").upsert({ admin_id: userId, slug });
-
-  const trialEnd = new Date(Date.now() + TRIAL_DAYS * 86400000).toISOString();
-  await supabase.from("subscriptions").insert({
-    admin_id: userId,
-    plan_id: "trial",
-    billing_cycle: "monthly",
-    status: "trialing",
-    trial_end: trialEnd,
-  });
-
-  if (plan === "trial") {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.ai4trade.co.uk";
-    return Response.json({ url: `${appUrl}/login?welcome=1` });
-  }
-
-  const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL;
-  const metadata = {
-    admin_id: userId,
-    plan: planIdFor(plan, billingCycle),
-    billing_cycle: billingCycle,
-  };
-
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    payment_method_types: ["card"],
-    customer_email: email,
-    client_reference_id: userId,
-    line_items: [{ price: priceId, quantity: 1 }],
-    metadata,
-    subscription_data: { metadata },
-    success_url: `${origin}/signup/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}/signup/cancelled`,
-  });
-
-  return Response.json({ url: session.url });
 }

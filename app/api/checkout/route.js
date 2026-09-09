@@ -17,33 +17,41 @@ export async function POST(req) {
     return NextResponse.json({ error: "Invalid plan or billing cycle" }, { status: 400 });
   }
 
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const metadata = {
+      admin_id: user.id,
+      plan: planIdFor(plan, billingCycle),
+      billing_cycle: billingCycle,
+    };
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      payment_method_types: ["card"],
+      line_items: [{ price: priceId, quantity: 1 }],
+      customer_email: user.email,
+      client_reference_id: user.id,
+      metadata,
+      // Also stamped on the subscription itself so later
+      // customer.subscription.updated/deleted webhook events carry admin_id
+      // and plan without needing a DB lookup by stripe_subscription_id.
+      subscription_data: { metadata },
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/signup/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing?canceled=true`,
+    });
+
+    return NextResponse.json({ url: session.url });
+  } catch (err) {
+    console.error("checkout failed:", err);
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 500 }
+    );
   }
-
-  const metadata = {
-    admin_id: user.id,
-    plan: planIdFor(plan, billingCycle),
-    billing_cycle: billingCycle,
-  };
-
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    payment_method_types: ["card"],
-    line_items: [{ price: priceId, quantity: 1 }],
-    customer_email: user.email,
-    client_reference_id: user.id,
-    metadata,
-    // Also stamped on the subscription itself so later
-    // customer.subscription.updated/deleted webhook events carry admin_id
-    // and plan without needing a DB lookup by stripe_subscription_id.
-    subscription_data: { metadata },
-    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/signup/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing?canceled=true`,
-  });
-
-  return NextResponse.json({ url: session.url });
 }

@@ -23,62 +23,70 @@ export async function POST(request) {
     );
   }
 
-  const supabase = createAdminClient();
+  try {
+    const supabase = createAdminClient();
 
-  const { data: link, error: linkLookupError } = await supabase
-    .from("admin_links")
-    .select("admin_id")
-    .eq("slug", businessSlug)
-    .maybeSingle();
+    const { data: link, error: linkLookupError } = await supabase
+      .from("admin_links")
+      .select("admin_id")
+      .eq("slug", businessSlug)
+      .maybeSingle();
 
-  if (linkLookupError || !link) {
-    return Response.json(
-      { error: "We couldn't find that business" },
-      { status: 404 }
-    );
-  }
+    if (linkLookupError || !link) {
+      return Response.json(
+        { error: "We couldn't find that business" },
+        { status: 404 }
+      );
+    }
 
-  const { data: adminProfile } = await supabase
-    .from("profiles")
-    .select("name")
-    .eq("id", link.admin_id)
-    .maybeSingle();
+    const { data: adminProfile } = await supabase
+      .from("profiles")
+      .select("name")
+      .eq("id", link.admin_id)
+      .maybeSingle();
 
-  const { data: created, error: createUserError } =
-    await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
+    const { data: created, error: createUserError } =
+      await supabase.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+      });
+
+    if (createUserError) {
+      const status = createUserError.status === 422 ? 409 : 500;
+      return Response.json(
+        {
+          error:
+            createUserError.status === 422
+              ? "An account with that email already exists"
+              : "Could not create account",
+        },
+        { status }
+      );
+    }
+
+    const { error: profileError } = await supabase.from("profiles").upsert({
+      id: created.user.id,
+      name: fullName || null,
+      username: email,
+      role: "customer",
+      parent_admin: link.admin_id,
     });
 
-  if (createUserError) {
-    const status = createUserError.status === 422 ? 409 : 500;
-    return Response.json(
-      {
-        error:
-          createUserError.status === 422
-            ? "An account with that email already exists"
-            : "Could not create account",
-      },
-      { status }
-    );
-  }
+    if (profileError) {
+      await supabase.auth.admin.deleteUser(created.user.id);
+      return Response.json(
+        { error: "Could not create customer record" },
+        { status: 500 }
+      );
+    }
 
-  const { error: profileError } = await supabase.from("profiles").upsert({
-    id: created.user.id,
-    name: fullName || null,
-    username: email,
-    role: "customer",
-    parent_admin: link.admin_id,
-  });
-
-  if (profileError) {
-    await supabase.auth.admin.deleteUser(created.user.id);
+    return Response.json({ success: true, businessName: adminProfile?.name || "your electrician" });
+  } catch (err) {
+    console.error("signup/customer failed:", err);
     return Response.json(
-      { error: "Could not create customer record" },
+      { error: "Something went wrong. Please try again." },
       { status: 500 }
     );
   }
-
-  return Response.json({ success: true, businessName: adminProfile?.name || "your electrician" });
 }
