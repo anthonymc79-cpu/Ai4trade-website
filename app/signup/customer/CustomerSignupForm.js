@@ -48,7 +48,7 @@ export default function CustomerSignupForm() {
     }
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.yourdomain.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.ai4trade.co.uk";
 
   if (success) {
     return (

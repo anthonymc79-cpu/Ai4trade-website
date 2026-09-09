@@ -8,7 +8,7 @@ export const metadata = pageMetadata({
   noindex: true,
 });
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.yourdomain.com";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.ai4trade.co.uk";
 
 export default function SignupSuccessPage() {
   // Stripe redirects here with ?session_id=... — the webhook has usually

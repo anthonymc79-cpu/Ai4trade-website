@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./Header.module.css";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.yourdomain.com";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.ai4trade.co.uk";
 
 const PRODUCT_LINKS = [
   { href: "/for-electricians", label: "For electrical businesses" },
