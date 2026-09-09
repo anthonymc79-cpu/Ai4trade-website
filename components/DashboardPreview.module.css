@@ -47,6 +47,21 @@
 /* Workflow stage row                                                     */
 /* ---------------------------------------------------------------------- */
 
+.stagesWrap {
+  position: relative;
+}
+
+.stagesWrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 4px;
+  width: 28px;
+  background: linear-gradient(to right, transparent, var(--panel));
+  pointer-events: none;
+}
+
 .stages {
   display: flex;
   align-items: stretch;
@@ -54,6 +69,16 @@
   overflow-x: auto;
   padding-bottom: 4px;
   scrollbar-width: thin;
+  scrollbar-color: var(--wire-line) transparent;
+}
+
+.stages::-webkit-scrollbar {
+  height: 6px;
+}
+
+.stages::-webkit-scrollbar-thumb {
+  background: var(--wire-line);
+  border-radius: 3px;
 }
 
 .connector {

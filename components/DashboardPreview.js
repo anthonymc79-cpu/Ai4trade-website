@@ -122,15 +122,16 @@ export default function DashboardPreview() {
       <div className={styles.cardHead}>
         <h3 className={styles.cardTitle}>Trade Workflow Command Centre</h3>
         <div className={styles.headControls}>
-          <button type="button" className={styles.pill}>
+          <button type="button" tabIndex={-1} className={styles.pill}>
             This week {icon.chevron}
           </button>
-          <button type="button" className={styles.pill}>
+          <button type="button" tabIndex={-1} className={styles.pill}>
             {icon.filter} Filters
           </button>
         </div>
       </div>
 
+      <div className={styles.stagesWrap}>
       <div className={styles.stages}>
         {/* 1. New enquiry */}
         <div className={styles.stage}>
@@ -161,7 +162,7 @@ export default function DashboardPreview() {
               </div>
               <span className={styles.listTime}>32m ago</span>
             </div>
-            <a className={styles.viewAll} href="#">View all enquiries</a>
+            <a className={styles.viewAll} href="#" tabIndex={-1}>View all enquiries</a>
           </div>
         </div>
 
@@ -197,7 +198,7 @@ export default function DashboardPreview() {
                 <div className={styles.listSub}>Replied 32m ago</div>
               </div>
             </div>
-            <a className={styles.viewAll} href="#">View all replies</a>
+            <a className={styles.viewAll} href="#" tabIndex={-1}>View all replies</a>
           </div>
         </div>
 
@@ -229,7 +230,7 @@ export default function DashboardPreview() {
                 <div className={styles.listSub}>Sam Khan</div>
               </div>
             </div>
-            <a className={styles.viewAll} href="#">View calendar</a>
+            <a className={styles.viewAll} href="#" tabIndex={-1}>View calendar</a>
           </div>
         </div>
 
@@ -258,7 +259,7 @@ export default function DashboardPreview() {
               <span className={styles.statusCount}>2</span>
               <span className={styles.statusLabel}>Draft</span>
             </div>
-            <a className={styles.viewAll} href="#">View all quotes</a>
+            <a className={styles.viewAll} href="#" tabIndex={-1}>View all quotes</a>
           </div>
         </div>
 
@@ -290,7 +291,7 @@ export default function DashboardPreview() {
               </div>
               <span className={styles.listTime}>Tomorrow</span>
             </div>
-            <a className={styles.viewAll} href="#">View follow-ups</a>
+            <a className={styles.viewAll} href="#" tabIndex={-1}>View follow-ups</a>
           </div>
         </div>
 
@@ -309,6 +310,7 @@ export default function DashboardPreview() {
             <div className={styles.callout}>Great work! 5 jobs booked 🎉</div>
           </div>
         </div>
+      </div>
       </div>
 
       <div className={styles.metrics}>
