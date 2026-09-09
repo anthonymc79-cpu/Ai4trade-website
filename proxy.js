@@ -10,42 +10,50 @@ export async function proxy(request) {
   // server-side, since middleware runs on the edge and shouldn't be the
   // only thing standing between a visitor and paid content.
   if (pathname.startsWith("/tutorials/advanced-")) {
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      {
-        cookies: {
-          get(name) {
-            return request.cookies.get(name)?.value;
+    // Any failure below (misconfigured Supabase env vars, a downstream
+    // outage) should fail closed — redirect to pricing like a non-
+    // subscriber, rather than take the whole route down.
+    try {
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+        {
+          cookies: {
+            get(name) {
+              return request.cookies.get(name)?.value;
+            },
+            set(name, value, options) {
+              response.cookies.set({ name, value, ...options });
+            },
+            remove(name, options) {
+              response.cookies.set({ name, value: "", ...options, maxAge: 0 });
+            },
           },
-          set(name, value, options) {
-            response.cookies.set({ name, value, ...options });
-          },
-          remove(name, options) {
-            response.cookies.set({ name, value: "", ...options, maxAge: 0 });
-          },
-        },
+        }
+      );
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      let isSubscriber = false;
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("plan, plan_active")
+          .eq("id", user.id)
+          .maybeSingle();
+        // "Subscriber" here means a genuine paying plan, not the free trial —
+        // trial accounts get everything else (see PLAN_FEATURES.inviteLinks
+        // in app.js, which trial can access) but not Pro tutorials.
+        isSubscriber = profile?.plan_active === true && profile?.plan !== "trial";
       }
-    );
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    let isSubscriber = false;
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("plan, plan_active")
-        .eq("id", user.id)
-        .maybeSingle();
-      // "Subscriber" here means a genuine paying plan, not the free trial —
-      // trial accounts get everything else (see PLAN_FEATURES.inviteLinks
-      // in app.js, which trial can access) but not Pro tutorials.
-      isSubscriber = profile?.plan_active === true && profile?.plan !== "trial";
-    }
-
-    if (!isSubscriber) {
+      if (!isSubscriber) {
+        return NextResponse.redirect(new URL("/pricing", request.url));
+      }
+    } catch (err) {
+      console.error("proxy: advanced tutorial gate failed:", err);
       return NextResponse.redirect(new URL("/pricing", request.url));
     }
   }
