@@ -1,265 +1,172 @@
 import Link from "next/link";
-import DashboardPreview from "@/components/DashboardPreview";
 import styles from "./Home.module.css";
-import { pageMetadata } from "@/lib/seo";
+import { sanityFetch } from "@/lib/sanity/client";
+import { HOME_PAGE_QUERY } from "@/lib/sanity/queries";
 
-export const metadata = pageMetadata({
-  title: "Ai4Trade — AI-powered job management for trade businesses",
-  description:
-    "Spend less time on admin and win more jobs. Quoting, EICR certification, floor plans, and job management for electrical businesses — with a free booking portal for their customers.",
-  path: "/",
-});
+// Live site picks up published edits within about a minute.
+export const revalidate = 60;
 
-const FEATURES = [
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path
-          d="M4 5.5h16v10H9.5L5 19v-3.5H4v-10Z"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    title: "Reply instantly",
-    body: "AI replies to new enquiries in seconds—day or night.",
+// The current wording, used until the homepage is published in Sanity
+// (and as a safety net if Sanity can't be reached).
+const FALLBACK = {
+  hero: {
+    eyebrow: "Two ways in",
+    heading:
+      "One board for every job. Every certificate. Every customer who's waiting on you.",
+    headingHighlight: "Every certificate.",
+    subheading:
+      "Ai4Trade is job management, quoting, and EICR certification built for electrical businesses — with a free booking portal your own customers use to reach you.",
   },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path
-          d="M9 18h7M8 18c1.4 0 2-1 2-2.3v-3M8 12.7h4M9.7 12.7c-1 0-1.7-.9-1.7-2.2 0-2 1.6-3.5 3.6-3.5 1 0 1.9.4 2.6 1.1"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    title: "Quote faster",
-    body: "Create accurate quotes in minutes, not hours.",
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path
-          d="M4 12.5a8 8 0 1 1 2.6 5.9"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-        />
-        <path d="M4 17v-4h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="m10 12 2 2 3.5-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    title: "Chase automatically",
-    body: "Smart follow-ups keep quotes moving.",
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M4 17V9M9.5 17v-5M15 17V7M20 17v-9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      </svg>
-    ),
-    title: "Know what's next",
-    body: "Clear next actions so you always stay on top.",
-  },
-];
+  audienceCards: [
+    {
+      _key: "business",
+      label: "Run a business",
+      heading: "I'm an electrician or business owner",
+      description:
+        "Manage jobs, quotes, floorplans, and certificates in one place — and give your customers a branded portal of their own.",
+      button: { label: "See how it works →", href: "/for-electricians", style: "primary" },
+    },
+    {
+      _key: "homeowner",
+      label: "Need work done",
+      heading: "I need electrical work doing",
+      description:
+        "Book a free enquiry with your electrician, track your job, and keep every certificate in one place — no charge, ever.",
+      button: { label: "Get a free quote →", href: "/services", style: "secondary" },
+    },
+  ],
+  sections: [
+    {
+      _key: "trade",
+      _type: "featureGrid",
+      eyebrow: "Built for the trade",
+      items: [
+        {
+          _key: "quoting",
+          label: "01 · QUOTING",
+          title: "Quote in minutes, not evenings",
+          description:
+            "Job type and postcode generate a quote automatically, ready to send before you've left the driveway.",
+        },
+        {
+          _key: "cert",
+          label: "02 · CERTIFICATION",
+          title: "EICRs that sign themselves off",
+          description:
+            "Observation codes, remedial notes, and a signed certificate — without a second piece of software.",
+        },
+        {
+          _key: "portal",
+          label: "03 · CUSTOMER PORTAL",
+          title: "Your own branded booking page",
+          description:
+            "Every subscriber gets a portal at their own web address — free for their customers to use.",
+        },
+      ],
+    },
+  ],
+  seo: { title: "Ai4Trade — job management for electrical businesses" },
+};
 
-const BEFORE_ITEMS = [
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path
-          d="M7 4.5c1 0 1.9.6 2.2 1.6l.6 1.8a2 2 0 0 1-.5 2.1l-.8.8a12 12 0 0 0 5.6 5.6l.8-.8a2 2 0 0 1 2.1-.5l1.8.6c1 .3 1.6 1.2 1.6 2.2v1.6c0 1.3-1.1 2.3-2.4 2.1-9-1.3-13.6-8-14.5-14.7C3.3 6 4.3 4.7 5.6 4.7H7Z"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path d="m4 4 16 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-    title: "Missed enquiries",
-    body: "Calls and messages go unanswered.",
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12.5" r="8" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M12 8.5v4l3 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    title: "Late follow-ups",
-    body: "Leads go cold and jobs are lost.",
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <rect x="6" y="5" width="12" height="15" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M9 9h6M9 12.5h6M9 16h3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      </svg>
-    ),
-    title: "Scattered notes",
-    body: "Info is everywhere, nothing's clear.",
-  },
-];
+async function getHomePage() {
+  const data = await sanityFetch(HOME_PAGE_QUERY);
+  if (!data) console.warn("Homepage: nothing from Sanity, showing built-in wording");
+  return data ?? FALLBACK;
+}
 
-const WITH_ITEMS = [
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path
-          d="M4 5.5h16v10H9.5L5 19v-3.5H4v-10Z"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinejoin="round"
-        />
-        <circle cx="9" cy="10.5" r="0.9" fill="currentColor" />
-        <circle cx="12" cy="10.5" r="0.9" fill="currentColor" />
-        <circle cx="15" cy="10.5" r="0.9" fill="currentColor" />
-      </svg>
-    ),
-    title: "Instant replies",
-    body: "AI responds 24/7 so you never miss a job.",
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path
-          d="m4 12 16-8-6 16-2.5-6.5L4 12Z"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-    title: "Automated chasing",
-    body: "Smart follow-ups keep quotes moving.",
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <rect x="6" y="5" width="12" height="15" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="m9 12 2 2 4-4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    title: "Clear next action",
-    body: "One place to see what to do next.",
-  },
-];
+export async function generateMetadata() {
+  const page = await getHomePage();
+  return {
+    title: page.seo?.title || FALLBACK.seo.title,
+    description: page.seo?.description || undefined,
+  };
+}
 
-export default function HomePage() {
+const BUTTON_CLASS = {
+  primary: "btn btn--copper",
+  secondary: "btn btn--ghost",
+};
+
+function HighlightedHeading({ text = "", highlight }) {
+  if (!highlight || !text.includes(highlight)) return text;
+  const index = text.indexOf(highlight);
+  return (
+    <>
+      {text.slice(0, index)}
+      <em>{highlight}</em>
+      {text.slice(index + highlight.length)}
+    </>
+  );
+}
+
+function FeatureGrid({ section }) {
+  return (
+    <section className="section--tight">
+      <div className="container">
+        {(section.eyebrow || section.heading) && (
+          <div className={styles.stripHead}>
+            {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
+            {section.heading && <h2>{section.heading}</h2>}
+            {section.intro && <p>{section.intro}</p>}
+          </div>
+        )}
+        <div className="grid-3">
+          {section.items?.map((item) => (
+            <div className="tag" key={item._key}>
+              {item.label && <span className="tag__code">{item.label}</span>}
+              <h3 className="tag__title">{item.title}</h3>
+              {item.description && <p className="tag__body">{item.description}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default async function HomePage() {
+  const page = await getHomePage();
+  const hero = page.hero ?? FALLBACK.hero;
+
   return (
     <>
       <section className={styles.hero}>
-        <svg className={styles.heroDecoration} viewBox="0 0 220 140" fill="none" aria-hidden="true">
-          <path
-            d="M2 120h40l16-16h50l18-18h60"
-            stroke="var(--wire-line)"
-            strokeWidth="1.5"
-          />
-          <circle cx="42" cy="120" r="3" fill="var(--wire-line)" />
-          <circle cx="108" cy="104" r="3" fill="var(--wire-line)" />
-          <circle cx="176" cy="86" r="3" fill="var(--trace)" opacity="0.5" />
-        </svg>
-
         <div className="container">
-          <div className={styles.heroGrid}>
-            <div className={styles.heroContent}>
-              <h1 className={styles.heroTitle}>
-                Spend less time on admin. Win more jobs.
-              </h1>
-              <p className={styles.heroLead}>
-                AI-powered automation for trade businesses—from the first
-                enquiry to the final invoice.
-              </p>
-              <div className={styles.heroActions}>
-                <Link href="/signup/business" className="btn btn--copper">
-                  Book a demo
-                </Link>
-                <Link href="/for-electricians" className="btn btn--ghost">
-                  See how it works
-                </Link>
-              </div>
-            </div>
+          {hero.eyebrow && <span className="eyebrow">{hero.eyebrow}</span>}
+          <h1 className={styles.heroTitle}>
+            <HighlightedHeading text={hero.heading} highlight={hero.headingHighlight} />
+          </h1>
+          {hero.subheading && <p className={styles.heroLead}>{hero.subheading}</p>}
 
-            <div className={styles.heroDashboard}>
-              <DashboardPreview />
+          {page.audienceCards?.length > 0 && (
+            <div className={styles.split}>
+              {page.audienceCards.map((card) => (
+                <div className={styles.splitPane} key={card._key}>
+                  {card.label && <span className={styles.splitLabel}>{card.label}</span>}
+                  <h2 className={styles.splitTitle}>{card.heading}</h2>
+                  {card.description && <p className={styles.splitBody}>{card.description}</p>}
+                  {card.button?.href && (
+                    <Link
+                      href={card.button.href}
+                      className={BUTTON_CLASS[card.button.style] || BUTTON_CLASS.primary}
+                    >
+                      {card.button.label}
+                    </Link>
+                  )}
+                </div>
+              ))}
             </div>
-          </div>
+          )}
         </div>
       </section>
 
-      <section className={styles.featuresSection}>
-        <div className="container">
-          <div className={styles.featureGrid}>
-            {FEATURES.map((f) => (
-              <div className={styles.featureCard} key={f.title}>
-                <div className={styles.featureIcon}>{f.icon}</div>
-                <h3 className={styles.featureTitle}>{f.title}</h3>
-                <p className={styles.featureBody}>{f.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.compareSection}>
-        <div className="container">
-          <h2 className={styles.compareHeading}>
-            A simpler day for your trade business
-          </h2>
-
-          <div className={styles.compareGrid}>
-            <div className={styles.comparePanel}>
-              <span className={styles.comparePanelLabel}>Before</span>
-              <p className={styles.comparePanelLead}>
-                Missed calls, late quote follow-ups, scattered notes.
-              </p>
-              <div className={styles.compareItems}>
-                {BEFORE_ITEMS.map((item) => (
-                  <div className={styles.compareItem} key={item.title}>
-                    <div className={styles.compareItemIcon}>{item.icon}</div>
-                    <div>
-                      <h4 className={styles.compareItemTitle}>{item.title}</h4>
-                      <p className={styles.compareItemBody}>{item.body}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className={styles.compareArrow} aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-
-            <div className={`${styles.comparePanel} ${styles.comparePanelAccent}`}>
-              <span className={`${styles.comparePanelLabel} ${styles.comparePanelLabelAccent}`}>
-                With AI 4 Trade
-              </span>
-              <p className={styles.comparePanelLead}>
-                Instant replies, automated chasing, a clear next action.
-              </p>
-              <div className={styles.compareItems}>
-                {WITH_ITEMS.map((item) => (
-                  <div className={styles.compareItem} key={item.title}>
-                    <div className={`${styles.compareItemIcon} ${styles.compareItemIconAccent}`}>
-                      {item.icon}
-                    </div>
-                    <div>
-                      <h4 className={styles.compareItemTitle}>{item.title}</h4>
-                      <p className={styles.compareItemBody}>{item.body}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {page.sections?.map((section) => {
+        if (section._type === "featureGrid") {
+          return <FeatureGrid key={section._key} section={section} />;
+        }
+        // Other section types get their own components as other pages are converted.
+        return null;
+      })}
     </>
   );
 }
