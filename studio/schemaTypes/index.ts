@@ -2,7 +2,7 @@ import {cta} from './objects/cta'
 import {hero} from './objects/hero'
 import {imageWithAlt} from './objects/imageWithAlt'
 import {seo} from './objects/seo'
-import {ctaBanner, faqSection, featureGrid, textWithImage} from './objects/sections'
+import {calloutPanel, ctaBanner, faqSection, featureGrid, textWithImage} from './objects/sections'
 import {homePage} from './documents/homePage'
 import {landingPage} from './documents/landingPage'
 import {pricingTier} from './documents/pricingTier'
@@ -24,5 +24,6 @@ export const schemaTypes = [
   featureGrid,
   textWithImage,
   faqSection,
+  calloutPanel,
   ctaBanner,
 ]

@@ -1,123 +1,190 @@
 import Link from "next/link";
 import styles from "./ForElectricians.module.css";
-import { pageMetadata } from "@/lib/seo";
+import { sanityFetch } from "@/lib/sanity/client";
+import { LANDING_PAGE_QUERY } from "@/lib/sanity/queries";
 
-export const metadata = pageMetadata({
-  title: "Ai4Trade for electrical businesses",
-  description:
-    "Job management, quoting, EICR certification, and a free branded customer portal — for electrical businesses of any size.",
-  path: "/for-electricians",
-});
+// Live site picks up published edits within about a minute.
+export const revalidate = 60;
 
-const FEATURES = [
-  {
-    code: "JOB-01",
-    title: "One board for every job",
-    body: "Track enquiries, quotes, scheduled work, and completed jobs across your whole team — no spreadsheets, no missed callbacks.",
-  },
-  {
-    code: "QUO-02",
-    title: "Automated quoting rules",
-    body: "Set pricing by job type and postcode once. Every new enquiry gets a quote back in minutes, not after you've finished today's jobs.",
-  },
-  {
-    code: "CER-03",
-    title: "EICR certificates, start to finish",
-    body: "Run the inspection, log observation codes, and issue a signed certificate — all inside the same job record.",
-  },
-  {
-    code: "FLR-04",
-    title: "Floorplans from the site visit",
-    body: "Sketch circuits on site on a tablet, and turn them into a floorplan the whole team can reference on the next visit.",
-  },
-  {
-    code: "AUT-05",
-    title: "Automation and custom branding",
-    body: "Push every stage of a job to your own CRM or spreadsheet via webhooks, export your data as CSV any time, and put your own branding on your portal and certificates — all on Pro.",
-  },
-  {
-    code: "SUB-06",
-    title: "One subscription, unlimited free customers",
-    body: "You pay one subscription. Every homeowner who books through your portal uses it for free — always.",
-  },
-];
+const SLUG = "for-electricians";
 
-export default function ForElectriciansPage() {
+// The current wording, used until this page is published in Sanity
+// (and as a safety net if Sanity can't be reached).
+const FALLBACK = {
+  hero: {
+    eyebrow: "For electrical businesses",
+    heading: "Run the business side, so you can get back to the job side.",
+    subheading:
+      "Ai4Trade replaces the spreadsheet, the paper EICR pad, and the group chat with your office — one subscription per business, free for every customer who books through you.",
+    buttons: [
+      { _key: "start", label: "Start your subscription", href: "/signup/business", style: "primary" },
+      { _key: "pricing", label: "See pricing", href: "/pricing", style: "secondary" },
+    ],
+  },
+  sections: [
+    {
+      _key: "features",
+      _type: "featureGrid",
+      eyebrow: "What's inside",
+      items: [
+        { _key: "job", label: "JOB-01", title: "One board for every job", description: "Track enquiries, quotes, scheduled work, and completed jobs across your whole team — no spreadsheets, no missed callbacks." },
+        { _key: "quo", label: "QUO-02", title: "Automated quoting rules", description: "Set pricing by job type and postcode once. Every new enquiry gets a quote back in minutes, not after you've finished today's jobs." },
+        { _key: "cer", label: "CER-03", title: "EICR certificates, start to finish", description: "Run the inspection, log observation codes, and issue a signed certificate — all inside the same job record." },
+        { _key: "flr", label: "FLR-04", title: "Floorplans from the site visit", description: "Sketch circuits on site on a tablet, and turn them into a floorplan the whole team can reference on the next visit." },
+        { _key: "tea", label: "TEA-05", title: "Team roles and permissions", description: "Control what each engineer, office admin, or subcontractor can see and edit as your team grows past two people." },
+        { _key: "sub", label: "SUB-06", title: "One subscription, unlimited free customers", description: "You pay one subscription. Every homeowner who books through your portal uses it for free — always." },
+      ],
+    },
+    {
+      _key: "portal",
+      _type: "calloutPanel",
+      eyebrow: "Your branded portal",
+      heading: "Your customers book through a page with your name on it",
+      text: "Every subscribing business gets its own web address — shareable on invoices, your van, or your own website.",
+      highlight: "sparky-ltd.ai4trade.app",
+      sideText:
+        "Homeowners who book through your portal register for free — they're your customers, not ours. You never see another business's jobs, and no one sees yours.",
+    },
+    {
+      _key: "tutorials",
+      _type: "ctaBanner",
+      eyebrow: "See it in action",
+      heading: "Watch a job go from enquiry to signed certificate",
+      button: { label: "Browse the tutorial library →", href: "/tutorials", style: "secondary" },
+    },
+  ],
+  seo: {
+    title: "Ai4Trade for electrical businesses",
+    description:
+      "Job management, quoting, EICR certification, and a free branded customer portal — for electrical businesses of any size.",
+  },
+};
+
+async function getPage() {
+  const data = await sanityFetch(LANDING_PAGE_QUERY, { slug: SLUG });
+  if (!data) console.warn(`/${SLUG}: nothing from Sanity, showing built-in wording`);
+  return data ?? FALLBACK;
+}
+
+export async function generateMetadata() {
+  const page = await getPage();
+  return {
+    title: page.seo?.title || FALLBACK.seo.title,
+    description: page.seo?.description || FALLBACK.seo.description,
+  };
+}
+
+const BUTTON_CLASS = {
+  primary: "btn btn--copper",
+  secondary: "btn btn--ghost",
+};
+
+function Button({ button }) {
+  if (!button?.href) return null;
+  return (
+    <Link className={BUTTON_CLASS[button.style] || BUTTON_CLASS.primary} href={button.href}>
+      {button.label}
+    </Link>
+  );
+}
+
+function FeatureGrid({ section }) {
+  return (
+    <section className="section">
+      <div className="container">
+        {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
+        {section.heading && (
+          <h2 style={{ fontSize: 26, margin: "14px 0 10px" }}>{section.heading}</h2>
+        )}
+        {section.intro && (
+          <p style={{ color: "var(--paper-dim)", fontSize: 14.5 }}>{section.intro}</p>
+        )}
+        <div className="grid-3" style={{ marginTop: 24 }}>
+          {section.items?.map((item) => (
+            <div className="tag" key={item._key}>
+              {item.label && <span className="tag__code">{item.label}</span>}
+              <h3 className="tag__title">{item.title}</h3>
+              {item.description && <p className="tag__body">{item.description}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CalloutPanel({ section }) {
+  return (
+    <section className="section--tight">
+      <div className="container">
+        <div className={styles.portalCallout}>
+          <div>
+            {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
+            <h2 style={{ fontSize: 26, margin: "14px 0 10px" }}>{section.heading}</h2>
+            {section.text && (
+              <p style={{ color: "var(--paper-dim)", fontSize: 14.5 }}>{section.text}</p>
+            )}
+            {section.highlight && <span className={styles.portalUrl}>{section.highlight}</span>}
+          </div>
+          <div>
+            {section.sideText && (
+              <p style={{ color: "var(--paper-dim)", fontSize: 14.5 }}>{section.sideText}</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CtaBanner({ section }) {
+  return (
+    <section className="section--tight">
+      <div className="container">
+        {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
+        <h2 style={{ fontSize: 26, margin: "14px 0 18px" }}>{section.heading}</h2>
+        {section.text && (
+          <p style={{ color: "var(--paper-dim)", fontSize: 14.5, marginBottom: 18 }}>
+            {section.text}
+          </p>
+        )}
+        <Button button={section.button} />
+      </div>
+    </section>
+  );
+}
+
+const SECTION_COMPONENTS = {
+  featureGrid: FeatureGrid,
+  calloutPanel: CalloutPanel,
+  ctaBanner: CtaBanner,
+};
+
+export default async function ForElectriciansPage() {
+  const page = await getPage();
+  const hero = page.hero ?? FALLBACK.hero;
+
   return (
     <>
       <section className={styles.hero}>
         <div className="container">
-          <span className="eyebrow">For electrical businesses</span>
-          <h1 className={styles.heroTitle}>
-            Run the business side, so you can get back to the job side.
-          </h1>
-          <p className={styles.heroLead}>
-            Ai4Trade replaces the spreadsheet, the paper EICR pad, and the
-            group chat with your office — one subscription per business,
-            free for every customer who books through you.
-          </p>
-          <div className={styles.heroActions}>
-            <Link className="btn btn--copper" href="/signup/business">
-              Start your subscription
-            </Link>
-            <Link className="btn btn--ghost" href="/pricing">
-              See pricing
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <span className="eyebrow">What's inside</span>
-          <div className="grid-3" style={{ marginTop: 24 }}>
-            {FEATURES.map((f) => (
-              <div className="tag" key={f.code}>
-                <span className="tag__code">{f.code}</span>
-                <h3 className="tag__title">{f.title}</h3>
-                <p className="tag__body">{f.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section--tight">
-        <div className="container">
-          <div className={styles.portalCallout}>
-            <div>
-              <span className="eyebrow">Your branded portal</span>
-              <h2 style={{ fontSize: 26, margin: "14px 0 10px" }}>
-                Your customers book through a page with your name on it
-              </h2>
-              <p style={{ color: "var(--paper-dim)", fontSize: 14.5 }}>
-                Every subscribing business gets its own web address —
-                shareable on invoices, your van, or your own website.
-              </p>
-              <span className={styles.portalUrl}>sparky-ltd.ai4trade.app</span>
+          {hero.eyebrow && <span className="eyebrow">{hero.eyebrow}</span>}
+          <h1 className={styles.heroTitle}>{hero.heading}</h1>
+          {hero.subheading && <p className={styles.heroLead}>{hero.subheading}</p>}
+          {hero.buttons?.length > 0 && (
+            <div className={styles.heroActions}>
+              {hero.buttons.map((button) => (
+                <Button key={button._key} button={button} />
+              ))}
             </div>
-            <div>
-              <p style={{ color: "var(--paper-dim)", fontSize: 14.5 }}>
-                Homeowners who book through your portal register for free —
-                they're your customers, not ours. You never see another
-                business's jobs, and no one sees yours.
-              </p>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
-      <section className="section--tight">
-        <div className="container">
-          <span className="eyebrow">See it in action</span>
-          <h2 style={{ fontSize: 26, margin: "14px 0 18px" }}>
-            Watch a job go from enquiry to signed certificate
-          </h2>
-          <Link className="btn btn--ghost" href="/tutorials">
-            Browse the tutorial library →
-          </Link>
-        </div>
-      </section>
+      {page.sections?.map((section) => {
+        const Section = SECTION_COMPONENTS[section._type];
+        return Section ? <Section key={section._key} section={section} /> : null;
+      })}
     </>
   );
 }

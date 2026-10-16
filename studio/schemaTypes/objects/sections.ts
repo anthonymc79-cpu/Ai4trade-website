@@ -90,6 +90,7 @@ export const ctaBanner = defineType({
   title: 'Call-to-action banner',
   type: 'object',
   fields: [
+    defineField({name: 'eyebrow', title: 'Small text above heading', type: 'string'}),
     defineField({name: 'heading', type: 'string', validation: (rule) => rule.required()}),
     defineField({name: 'text', type: 'text', rows: 2}),
     defineField({name: 'button', type: 'cta'}),
@@ -97,6 +98,30 @@ export const ctaBanner = defineType({
   preview: {
     select: {title: 'heading'},
     prepare: ({title}) => ({title, subtitle: 'Call-to-action banner'}),
+  },
+})
+
+// A highlighted panel: text on the left, extra text on the right,
+// with an optional example shown in a code-style box (e.g. a web address).
+export const calloutPanel = defineType({
+  name: 'calloutPanel',
+  title: 'Callout panel',
+  type: 'object',
+  fields: [
+    defineField({name: 'eyebrow', title: 'Small text above heading', type: 'string'}),
+    defineField({name: 'heading', type: 'string', validation: (rule) => rule.required()}),
+    defineField({name: 'text', type: 'text', rows: 3}),
+    defineField({
+      name: 'highlight',
+      title: 'Example in a box',
+      type: 'string',
+      description: 'Optional, shown in a code-style box, e.g. "sparky-ltd.ai4trade.app".',
+    }),
+    defineField({name: 'sideText', title: 'Right-hand text', type: 'text', rows: 4}),
+  ],
+  preview: {
+    select: {title: 'heading'},
+    prepare: ({title}) => ({title, subtitle: 'Callout panel'}),
   },
 })
 
@@ -109,6 +134,7 @@ export const pageSections = defineField({
     defineArrayMember({type: 'featureGrid'}),
     defineArrayMember({type: 'textWithImage'}),
     defineArrayMember({type: 'faqSection'}),
+    defineArrayMember({type: 'calloutPanel'}),
     defineArrayMember({type: 'ctaBanner'}),
   ],
 })
