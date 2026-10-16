@@ -11,6 +11,13 @@ export const featureGrid = defineType({
     defineField({name: 'heading', type: 'string'}),
     defineField({name: 'intro', type: 'text', rows: 2}),
     defineField({
+      name: 'columns',
+      type: 'number',
+      description: 'How many cards per row on wide screens.',
+      options: {list: [2, 3], layout: 'radio', direction: 'horizontal'},
+      initialValue: 3,
+    }),
+    defineField({
       name: 'items',
       type: 'array',
       of: [
@@ -101,6 +108,36 @@ export const ctaBanner = defineType({
   },
 })
 
+// A plain block of text, optionally linkable as /page#anchor.
+export const textBlock = defineType({
+  name: 'textBlock',
+  title: 'Text block',
+  type: 'object',
+  fields: [
+    defineField({name: 'eyebrow', title: 'Small text above heading', type: 'string'}),
+    defineField({name: 'heading', type: 'string', validation: (rule) => rule.required()}),
+    defineField({
+      name: 'text',
+      type: 'text',
+      rows: 6,
+      description: 'Leave a blank line between paragraphs.',
+    }),
+    defineField({
+      name: 'anchorId',
+      title: 'Link name (optional)',
+      type: 'string',
+      description:
+        'Lets other pages link straight to this section, e.g. "eicr" makes /services#eicr work. Lowercase letters, numbers and dashes only.',
+      validation: (rule) =>
+        rule.regex(/^[a-z0-9-]+$/, {name: 'lowercase letters, numbers and dashes'}),
+    }),
+  ],
+  preview: {
+    select: {title: 'heading'},
+    prepare: ({title}) => ({title, subtitle: 'Text block'}),
+  },
+})
+
 // A highlighted panel: text on the left, extra text on the right,
 // with an optional example shown in a code-style box (e.g. a web address).
 export const calloutPanel = defineType({
@@ -132,6 +169,7 @@ export const pageSections = defineField({
   type: 'array',
   of: [
     defineArrayMember({type: 'featureGrid'}),
+    defineArrayMember({type: 'textBlock'}),
     defineArrayMember({type: 'textWithImage'}),
     defineArrayMember({type: 'faqSection'}),
     defineArrayMember({type: 'calloutPanel'}),

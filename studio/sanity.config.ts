@@ -8,7 +8,6 @@ export default defineConfig({
   name: 'default',
   title: 'Ai4Trade',
 
-  // Copy these two values from the sanity.config.ts that `sanity init` created.
   projectId: 'v7wbffev',
   dataset: 'production',
 

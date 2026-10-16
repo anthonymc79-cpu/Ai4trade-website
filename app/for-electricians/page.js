@@ -1,5 +1,4 @@
-import Link from "next/link";
-import styles from "./ForElectricians.module.css";
+import LandingPage from "@/components/sanity/LandingPage";
 import { sanityFetch } from "@/lib/sanity/client";
 import { LANDING_PAGE_QUERY } from "@/lib/sanity/queries";
 
@@ -74,117 +73,7 @@ export async function generateMetadata() {
   };
 }
 
-const BUTTON_CLASS = {
-  primary: "btn btn--copper",
-  secondary: "btn btn--ghost",
-};
-
-function Button({ button }) {
-  if (!button?.href) return null;
-  return (
-    <Link className={BUTTON_CLASS[button.style] || BUTTON_CLASS.primary} href={button.href}>
-      {button.label}
-    </Link>
-  );
-}
-
-function FeatureGrid({ section }) {
-  return (
-    <section className="section">
-      <div className="container">
-        {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
-        {section.heading && (
-          <h2 style={{ fontSize: 26, margin: "14px 0 10px" }}>{section.heading}</h2>
-        )}
-        {section.intro && (
-          <p style={{ color: "var(--paper-dim)", fontSize: 14.5 }}>{section.intro}</p>
-        )}
-        <div className="grid-3" style={{ marginTop: 24 }}>
-          {section.items?.map((item) => (
-            <div className="tag" key={item._key}>
-              {item.label && <span className="tag__code">{item.label}</span>}
-              <h3 className="tag__title">{item.title}</h3>
-              {item.description && <p className="tag__body">{item.description}</p>}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function CalloutPanel({ section }) {
-  return (
-    <section className="section--tight">
-      <div className="container">
-        <div className={styles.portalCallout}>
-          <div>
-            {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
-            <h2 style={{ fontSize: 26, margin: "14px 0 10px" }}>{section.heading}</h2>
-            {section.text && (
-              <p style={{ color: "var(--paper-dim)", fontSize: 14.5 }}>{section.text}</p>
-            )}
-            {section.highlight && <span className={styles.portalUrl}>{section.highlight}</span>}
-          </div>
-          <div>
-            {section.sideText && (
-              <p style={{ color: "var(--paper-dim)", fontSize: 14.5 }}>{section.sideText}</p>
-            )}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function CtaBanner({ section }) {
-  return (
-    <section className="section--tight">
-      <div className="container">
-        {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
-        <h2 style={{ fontSize: 26, margin: "14px 0 18px" }}>{section.heading}</h2>
-        {section.text && (
-          <p style={{ color: "var(--paper-dim)", fontSize: 14.5, marginBottom: 18 }}>
-            {section.text}
-          </p>
-        )}
-        <Button button={section.button} />
-      </div>
-    </section>
-  );
-}
-
-const SECTION_COMPONENTS = {
-  featureGrid: FeatureGrid,
-  calloutPanel: CalloutPanel,
-  ctaBanner: CtaBanner,
-};
-
 export default async function ForElectriciansPage() {
   const page = await getPage();
-  const hero = page.hero ?? FALLBACK.hero;
-
-  return (
-    <>
-      <section className={styles.hero}>
-        <div className="container">
-          {hero.eyebrow && <span className="eyebrow">{hero.eyebrow}</span>}
-          <h1 className={styles.heroTitle}>{hero.heading}</h1>
-          {hero.subheading && <p className={styles.heroLead}>{hero.subheading}</p>}
-          {hero.buttons?.length > 0 && (
-            <div className={styles.heroActions}>
-              {hero.buttons.map((button) => (
-                <Button key={button._key} button={button} />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {page.sections?.map((section) => {
-        const Section = SECTION_COMPONENTS[section._type];
-        return Section ? <Section key={section._key} section={section} /> : null;
-      })}
-    </>
-  );
+  return <LandingPage page={page} fallback={FALLBACK} />;
 }

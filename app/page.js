@@ -110,7 +110,7 @@ function FeatureGrid({ section }) {
             {section.intro && <p>{section.intro}</p>}
           </div>
         )}
-        <div className="grid-3">
+        <div className={section.columns === 2 ? "grid-2" : "grid-3"}>
           {section.items?.map((item) => (
             <div className="tag" key={item._key}>
               {item.label && <span className="tag__code">{item.label}</span>}

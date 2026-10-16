@@ -1,83 +1,64 @@
-import styles from "../for-electricians/ForElectricians.module.css";
-import { pageMetadata } from "@/lib/seo";
+import LandingPage from "@/components/sanity/LandingPage";
+import { sanityFetch } from "@/lib/sanity/client";
+import { LANDING_PAGE_QUERY } from "@/lib/sanity/queries";
 
-export const metadata = pageMetadata({
-  title: "Get electrical work done — Ai4Trade",
-  description:
-    "Book a free enquiry with an electrician using Ai4Trade, track your job, and keep every certificate in one place.",
-  path: "/services",
-});
+// Live site picks up published edits within about a minute.
+export const revalidate = 60;
 
-const SERVICES = [
-  {
-    code: "SVC-01",
-    title: "EICR — Electrical Installation Condition Report",
-    body: "A full safety check of your property's wiring, required when selling, renting, or simply due for a check-up.",
+const SLUG = "services";
+
+// The current wording, used until this page is published in Sanity
+// (and as a safety net if Sanity can't be reached).
+const FALLBACK = {
+  hero: {
+    eyebrow: "For homeowners",
+    heading: "Book electrical work, and actually know what's happening with it.",
+    subheading:
+      "Ai4Trade is free for you to use — your electrician's the one paying for the tools. Register, describe the job, and track it through to a signed certificate.",
   },
-  {
-    code: "SVC-02",
-    title: "Fault finding and repairs",
-    body: "Flickering lights, tripping circuits, or a socket that's stopped working — book a diagnosis with a local electrician.",
+  sections: [
+    {
+      _key: "services",
+      _type: "featureGrid",
+      columns: 2,
+      items: [
+        { _key: "eicr", label: "SVC-01", title: "EICR — Electrical Installation Condition Report", description: "A full safety check of your property's wiring, required when selling, renting, or simply due for a check-up." },
+        { _key: "faults", label: "SVC-02", title: "Fault finding and repairs", description: "Flickering lights, tripping circuits, or a socket that's stopped working — book a diagnosis with a local electrician." },
+        { _key: "rewires", label: "SVC-03", title: "Rewires and consumer unit upgrades", description: "Full or partial rewiring, and replacing an old fuse box with a modern consumer unit." },
+        { _key: "ev", label: "SVC-04", title: "EV charger installation", description: "Home charge point installation, quoted and scheduled through the same portal as any other job." },
+      ],
+    },
+    {
+      _key: "eicr-explained",
+      _type: "textBlock",
+      eyebrow: "EICR explained",
+      heading: "What actually happens during an inspection",
+      text: "An electrician checks your wiring, consumer unit, sockets, and earthing against current safety standards, notes anything that needs attention using standard observation codes, and issues a certificate confirming the result. Landlords typically need one every five years; homeowners often get one done when buying a property or after major work.",
+      anchorId: "eicr",
+    },
+  ],
+  seo: {
+    title: "Get electrical work done — Ai4Trade",
+    description:
+      "Book a free enquiry with an electrician using Ai4Trade, track your job, and keep every certificate in one place.",
   },
-  {
-    code: "SVC-03",
-    title: "Rewires and consumer unit upgrades",
-    body: "Full or partial rewiring, and replacing an old fuse box with a modern consumer unit.",
-  },
-  {
-    code: "SVC-04",
-    title: "EV charger installation",
-    body: "Home charge point installation, quoted and scheduled through the same portal as any other job.",
-  },
-];
+};
 
-export default function ServicesPage() {
-  return (
-    <>
-      <section className={styles.hero}>
-        <div className="container">
-          <span className="eyebrow">For homeowners</span>
-          <h1 className={styles.heroTitle}>
-            Book electrical work, and actually know what's happening with it.
-          </h1>
-          <p className={styles.heroLead}>
-            Ai4Trade is free for you to use — your electrician's the one
-            paying for the tools. Register, describe the job, and track it
-            through to a signed certificate.
-          </p>
-        </div>
-      </section>
+async function getPage() {
+  const data = await sanityFetch(LANDING_PAGE_QUERY, { slug: SLUG });
+  if (!data) console.warn(`/${SLUG}: nothing from Sanity, showing built-in wording`);
+  return data ?? FALLBACK;
+}
 
-      <section className="section">
-        <div className="container">
-          <div className="grid-2">
-            {SERVICES.map((s) => (
-              <div className="tag" key={s.code}>
-                <span className="tag__code">{s.code}</span>
-                <h3 className="tag__title">{s.title}</h3>
-                <p className="tag__body">{s.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+export async function generateMetadata() {
+  const page = await getPage();
+  return {
+    title: page.seo?.title || FALLBACK.seo.title,
+    description: page.seo?.description || FALLBACK.seo.description,
+  };
+}
 
-      <section className="section--tight" id="eicr">
-        <div className="container">
-          <span className="eyebrow">EICR explained</span>
-          <h2 style={{ fontSize: 26, margin: "14px 0 12px" }}>
-            What actually happens during an inspection
-          </h2>
-          <p style={{ color: "var(--paper-dim)", maxWidth: 640, fontSize: 15 }}>
-            An electrician checks your wiring, consumer unit, sockets, and
-            earthing against current safety standards, notes anything that
-            needs attention using standard observation codes, and issues a
-            certificate confirming the result. Landlords typically need one
-            every five years; homeowners often get one done when buying a
-            property or after major work.
-          </p>
-        </div>
-      </section>
-    </>
-  );
+export default async function ServicesPage() {
+  const page = await getPage();
+  return <LandingPage page={page} fallback={FALLBACK} />;
 }
