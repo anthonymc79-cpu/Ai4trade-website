@@ -1,20 +1,27 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./Header.module.css";
+import SmartLink from "./SmartLink";
+import { getSiteSettings } from "@/lib/sanity/siteSettings";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.yourdomain.com";
 
-const PRODUCT_LINKS = [
-  { href: "/for-electricians", label: "For electrical businesses" },
-  { href: "/services", label: "Get electrical work done" },
-];
+const BUTTON_CLASS = {
+  primary: "btn btn--copper",
+  secondary: "btn btn--ghost",
+};
 
-const RESOURCE_LINKS = [
-  { href: "/tutorials", label: "Tutorials" },
-  { href: "/pricing", label: "Pricing" },
-];
+function Chevron() {
+  return (
+    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+      <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  );
+}
 
-export default function Header() {
+export default async function Header() {
+  const { navigation, headerButton } = await getSiteSettings();
+
   return (
     <header className={styles.header}>
       <div className="container">
@@ -37,42 +44,27 @@ export default function Header() {
 
           <nav className={styles.nav}>
             <ul className={styles.navLinks}>
-              <li className={styles.hasMenu}>
-                <button type="button" className={styles.navBtn}>
-                  Product
-                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
-                    <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                  </svg>
-                </button>
-                <div className={styles.dropdown}>
-                  {PRODUCT_LINKS.map((item) => (
-                    <Link key={item.href} href={item.href}>
+              {navigation.map((item) =>
+                item.children?.length ? (
+                  <li className={styles.hasMenu} key={item._key || item.label}>
+                    <button type="button" className={styles.navBtn}>
                       {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </li>
-              <li>
-                <Link href="/for-electricians">For trades</Link>
-              </li>
-              <li>
-                <Link href="/pricing">Pricing</Link>
-              </li>
-              <li className={styles.hasMenu}>
-                <button type="button" className={styles.navBtn}>
-                  Resources
-                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
-                    <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                  </svg>
-                </button>
-                <div className={styles.dropdown}>
-                  {RESOURCE_LINKS.map((item) => (
-                    <Link key={item.href} href={item.href}>
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </li>
+                      <Chevron />
+                    </button>
+                    <div className={styles.dropdown}>
+                      {item.children.map((child) => (
+                        <SmartLink key={child._key || child.href} href={child.href}>
+                          {child.label}
+                        </SmartLink>
+                      ))}
+                    </div>
+                  </li>
+                ) : (
+                  <li key={item._key || item.label}>
+                    <SmartLink href={item.href}>{item.label}</SmartLink>
+                  </li>
+                )
+              )}
             </ul>
           </nav>
 
@@ -80,9 +72,14 @@ export default function Header() {
             <a className="btn btn--ghost" href={`${APP_URL}/login`}>
               Log in
             </a>
-            <a className="btn btn--copper" href="/signup/business">
-              Book a demo
-            </a>
+            {headerButton?.href && (
+              <SmartLink
+                className={BUTTON_CLASS[headerButton.style] || BUTTON_CLASS.primary}
+                href={headerButton.href}
+              >
+                {headerButton.label}
+              </SmartLink>
+            )}
           </div>
         </div>
       </div>

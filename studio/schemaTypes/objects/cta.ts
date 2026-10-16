@@ -14,7 +14,8 @@ export const cta = defineType({
       name: 'href',
       title: 'Link',
       type: 'string',
-      description: 'A page on this site (e.g. /pricing) or a full web address (https://...).',
+      description:
+        'A page on this site (e.g. /pricing), a full web address (https://...), or an email (mailto:you@example.com).',
       validation: (rule) => rule.required(),
     }),
     defineField({

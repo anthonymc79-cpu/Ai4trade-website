@@ -1,8 +1,11 @@
-import Link from "next/link";
 import Image from "next/image";
 import styles from "./Footer.module.css";
+import SmartLink from "./SmartLink";
+import { getSiteSettings } from "@/lib/sanity/siteSettings";
 
-export default function Footer() {
+export default async function Footer() {
+  const { footerTagline, footerColumns, copyrightName, footerSlogan } = await getSiteSettings();
+
   return (
     <footer className={styles.footer}>
       <div className="container">
@@ -18,54 +21,30 @@ export default function Footer() {
               />
               Ai4Trade
             </span>
-            Job management, quoting, and certification for electrical
-            businesses — built by people who've stood in a fuse cupboard
-            at 5pm on a Friday.
+            {footerTagline}
           </div>
 
           <div className={styles.cols}>
-            <div className={styles.col}>
-              <h4>Product</h4>
-              <ul>
-                <li>
-                  <Link href="/for-electricians">For electricians</Link>
-                </li>
-                <li>
-                  <Link href="/pricing">Pricing</Link>
-                </li>
-                <li>
-                  <Link href="/tutorials">Tutorials</Link>
-                </li>
-              </ul>
-            </div>
-            <div className={styles.col}>
-              <h4>Homeowners</h4>
-              <ul>
-                <li>
-                  <Link href="/services">Get a quote</Link>
-                </li>
-                <li>
-                  <Link href="/services#eicr">EICR explained</Link>
-                </li>
-              </ul>
-            </div>
-            <div className={styles.col}>
-              <h4>Company</h4>
-              <ul>
-                <li>
-                  <a href="mailto:hello@ai4trade.example">Contact</a>
-                </li>
-                <li>
-                  <Link href="/pricing">Book a demo</Link>
-                </li>
-              </ul>
-            </div>
+            {footerColumns.map((column) => (
+              <div className={styles.col} key={column._key || column.heading}>
+                <h4>{column.heading}</h4>
+                <ul>
+                  {column.links?.map((link) => (
+                    <li key={link._key || link.href}>
+                      <SmartLink href={link.href}>{link.label}</SmartLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
 
         <div className={styles.bottom}>
-          <span>© {new Date().getFullYear()} Ai4Trade Ltd.</span>
-          <span>Wired for the trade.</span>
+          <span>
+            © {new Date().getFullYear()} {copyrightName}
+          </span>
+          {footerSlogan && <span>{footerSlogan}</span>}
         </div>
       </div>
     </footer>
