@@ -1,20 +1,14 @@
-import { Space_Grotesk, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CircuitTrace from "@/components/CircuitTrace";
 
-const displayFont = Space_Grotesk({
+// One family for the whole site. Archivo is a grotesque with a width axis:
+// headings use its wider cuts, body text the normal width.
+const sansFont = Archivo({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display-var",
-  display: "swap",
-});
-
-const bodyFont = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body-var",
+  axes: ["wdth"],
+  variable: "--font-sans-var",
   display: "swap",
 });
 
@@ -57,15 +51,17 @@ const organizationJsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}
-      >
+    // The font classes live on <html> (not <body>) so that globals.css,
+    // which defines --font-display / --font-body on :root, can see them.
+    <html
+      lang="en"
+      className={`${sansFont.variable} ${monoFont.variable}`}
+    >
+      <body>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
-        <CircuitTrace />
         <Header />
         <main>{children}</main>
         <Footer />

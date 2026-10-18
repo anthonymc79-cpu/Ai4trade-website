@@ -1,65 +1,46 @@
 import Link from "next/link";
-import styles from "@/app/for-electricians/ForElectricians.module.css";
+import PageHero from "@/components/PageHero";
+import styles from "./landing.module.css";
 
-// Shared layout for Sanity "Page" documents (/for-electricians, /services, ...).
-
-const BUTTON_CLASS = {
-  primary: "btn btn--copper",
-  secondary: "btn btn--ghost",
-};
-
-const MUTED = { color: "var(--paper-dim)", fontSize: 14.5 };
+// Shared layout for Sanity "Page" documents (/for-electricians, /services,
+// and any page created in the editor).
 
 export function SanityButton({ button }) {
   if (!button?.href) return null;
+  // Main actions are orange buttons; secondary actions are plain blue links.
+  const className = button.style === "secondary" ? "textLink" : "btn btn--copper";
   return (
-    <Link className={BUTTON_CLASS[button.style] || BUTTON_CLASS.primary} href={button.href}>
+    <Link className={className} href={button.href}>
       {button.label}
     </Link>
   );
 }
 
-function Hero({ hero }) {
+function SectionHead({ eyebrow, heading, intro }) {
+  if (!eyebrow && !heading && !intro) return null;
   return (
-    <section className={styles.hero}>
-      <div className="container">
-        {hero.eyebrow && <span className="eyebrow">{hero.eyebrow}</span>}
-        <h1 className={styles.heroTitle}>{hero.heading}</h1>
-        {hero.subheading && <p className={styles.heroLead}>{hero.subheading}</p>}
-        {hero.buttons?.length > 0 && (
-          <div className={styles.heroActions}>
-            {hero.buttons.map((button) => (
-              <SanityButton key={button._key} button={button} />
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
+    <header className={styles.head}>
+      {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
+      {heading && <h2 className={styles.h2}>{heading}</h2>}
+      {intro && <p className={styles.intro}>{intro}</p>}
+    </header>
   );
 }
 
 function FeatureGrid({ section }) {
-  const hasHeader = section.eyebrow || section.heading || section.intro;
   return (
-    <section className="section">
+    <section className={styles.section}>
       <div className="container">
-        {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
-        {section.heading && (
-          <h2 style={{ fontSize: 26, margin: "14px 0 10px" }}>{section.heading}</h2>
-        )}
-        {section.intro && <p style={MUTED}>{section.intro}</p>}
-        <div
-          className={section.columns === 2 ? "grid-2" : "grid-3"}
-          style={hasHeader ? { marginTop: 24 } : undefined}
-        >
+        <SectionHead eyebrow={section.eyebrow} heading={section.heading} intro={section.intro} />
+        <ul className={`${styles.grid} ${section.columns === 2 ? styles.grid2 : styles.grid3}`}>
           {section.items?.map((item) => (
-            <div className="tag" key={item._key}>
-              {item.label && <span className="tag__code">{item.label}</span>}
-              <h3 className="tag__title">{item.title}</h3>
-              {item.description && <p className="tag__body">{item.description}</p>}
-            </div>
+            <li className={styles.card} key={item._key}>
+              {item.label && <p className={styles.cardLabel}>{item.label}</p>}
+              <h3 className={styles.cardTitle}>{item.title}</h3>
+              {item.description && <p className={styles.cardBody}>{item.description}</p>}
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );
@@ -68,18 +49,17 @@ function FeatureGrid({ section }) {
 function TextBlock({ section }) {
   const paragraphs = (section.text || "").split(/\n\s*\n/).filter((p) => p.trim());
   return (
-    <section className="section--tight" id={section.anchorId || undefined}>
+    <section className={`${styles.section} ${styles.grey}`} id={section.anchorId || undefined}>
       <div className="container">
-        {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
-        <h2 style={{ fontSize: 26, margin: "14px 0 12px" }}>{section.heading}</h2>
-        {paragraphs.map((text, i) => (
-          <p
-            key={i}
-            style={{ color: "var(--paper-dim)", maxWidth: 640, fontSize: 15, marginTop: i ? 12 : 0 }}
-          >
-            {text}
-          </p>
-        ))}
+        <div className={styles.prose}>
+          {section.eyebrow && <p className={styles.eyebrow}>{section.eyebrow}</p>}
+          <h2 className={styles.h2}>{section.heading}</h2>
+          {paragraphs.map((text, i) => (
+            <p key={i} className={styles.proseText}>
+              {text}
+            </p>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -87,16 +67,16 @@ function TextBlock({ section }) {
 
 function CalloutPanel({ section }) {
   return (
-    <section className="section--tight">
+    <section className={styles.section}>
       <div className="container">
-        <div className={styles.portalCallout}>
+        <div className={styles.callout}>
           <div>
-            {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
-            <h2 style={{ fontSize: 26, margin: "14px 0 10px" }}>{section.heading}</h2>
-            {section.text && <p style={MUTED}>{section.text}</p>}
-            {section.highlight && <span className={styles.portalUrl}>{section.highlight}</span>}
+            {section.eyebrow && <p className={styles.calloutEyebrow}>{section.eyebrow}</p>}
+            <h2 className={styles.calloutTitle}>{section.heading}</h2>
+            {section.text && <p className={styles.calloutText}>{section.text}</p>}
+            {section.highlight && <p className={styles.calloutPill}>{section.highlight}</p>}
           </div>
-          <div>{section.sideText && <p style={MUTED}>{section.sideText}</p>}</div>
+          {section.sideText && <p className={styles.calloutSide}>{section.sideText}</p>}
         </div>
       </div>
     </section>
@@ -105,12 +85,16 @@ function CalloutPanel({ section }) {
 
 function CtaBanner({ section }) {
   return (
-    <section className="section--tight">
+    <section className={`${styles.section} ${styles.cta}`}>
       <div className="container">
-        {section.eyebrow && <span className="eyebrow">{section.eyebrow}</span>}
-        <h2 style={{ fontSize: 26, margin: "14px 0 18px" }}>{section.heading}</h2>
-        {section.text && <p style={{ ...MUTED, marginBottom: 18 }}>{section.text}</p>}
-        <SanityButton button={section.button} />
+        {section.eyebrow && <p className={styles.eyebrow}>{section.eyebrow}</p>}
+        <h2 className={styles.ctaTitle}>{section.heading}</h2>
+        {section.text && <p className={styles.intro}>{section.text}</p>}
+        {section.button?.href && (
+          <div className={styles.ctaAction}>
+            <SanityButton button={{ ...section.button, style: "primary" }} />
+          </div>
+        )}
       </div>
     </section>
   );
@@ -124,9 +108,19 @@ const SECTION_COMPONENTS = {
 };
 
 export default function LandingPage({ page, fallback }) {
+  const hero = page.hero ?? fallback.hero;
   return (
     <>
-      <Hero hero={page.hero ?? fallback.hero} />
+      <PageHero
+        eyebrow={hero.eyebrow}
+        heading={hero.heading}
+        actions={
+          hero.buttons?.length > 0 &&
+          hero.buttons.map((button) => <SanityButton key={button._key} button={button} />)
+        }
+      >
+        {hero.subheading}
+      </PageHero>
       {page.sections?.map((section) => {
         const Section = SECTION_COMPONENTS[section._type];
         return Section ? <Section key={section._key} section={section} /> : null;

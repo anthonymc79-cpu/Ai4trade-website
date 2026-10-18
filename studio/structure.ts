@@ -1,7 +1,7 @@
 import type {StructureResolver} from 'sanity/structure'
 
 // Documents there should only ever be one of.
-export const SINGLETON_TYPES = new Set(['siteSettings', 'homePage', 'pricingPage'])
+export const SINGLETON_TYPES = new Set(['siteSettings', 'homePage', 'pricingPage', 'tutorialsPage'])
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -21,5 +21,10 @@ export const structure: StructureResolver = (S) =>
         .child(S.document().schemaType('siteSettings').documentId('siteSettings')),
       S.divider(),
       S.documentTypeListItem('landingPage').title('Pages'),
+      S.divider(),
+      S.listItem()
+        .title('Tutorials page')
+        .id('tutorialsPage')
+        .child(S.document().schemaType('tutorialsPage').documentId('tutorialsPage')),
       S.documentTypeListItem('tutorial').title('Tutorials'),
     ])

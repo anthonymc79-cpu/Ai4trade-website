@@ -10,6 +10,7 @@ import {pricingPage} from './documents/pricingPage'
 import {planCard} from './objects/planCard'
 import {siteSettings} from './documents/siteSettings'
 import {tutorial} from './documents/tutorial'
+import {tutorialsPage} from './documents/tutorialsPage'
 
 export const schemaTypes = [
   // Documents
@@ -17,6 +18,7 @@ export const schemaTypes = [
   homePage,
   landingPage,
   pricingPage,
+  tutorialsPage,
   tutorial,
   // Building blocks
   imageWithAlt,

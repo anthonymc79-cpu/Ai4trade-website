@@ -1,8 +1,8 @@
 .footer {
-  border-top: 1px solid var(--wire-line);
-  padding: 48px 0;
-  position: relative;
-  z-index: 2;
+  background: var(--surface);
+  padding: 56px 0 40px;
+  font-size: 13.5px;
+  color: var(--paper-dim);
 }
 
 .row {
@@ -10,13 +10,11 @@
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 32px;
+  gap: 40px;
 }
 
 .brand {
-  max-width: 280px;
-  color: var(--wire);
-  font-size: 14px;
+  max-width: 300px;
   line-height: 1.6;
 }
 
@@ -27,61 +25,60 @@
   font-family: var(--font-display);
   font-size: 17px;
   font-weight: 700;
+  font-stretch: 112%;
   color: var(--paper);
   margin-bottom: 10px;
 }
 
 .brandMark {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .cols {
   display: flex;
-  gap: 64px;
+  gap: 72px;
 }
 
 .col h4 {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--wire);
-  margin-bottom: 14px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--paper);
+  margin-bottom: 12px;
 }
 
 .col ul {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  font-size: 14.5px;
-  color: var(--paper-dim);
+  gap: 9px;
 }
 
 .col a:hover {
-  color: var(--trace);
+  color: var(--paper);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .bottom {
   margin-top: 40px;
-  padding-top: 24px;
-  border-top: 1px solid var(--wire-line);
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: var(--wire);
+  padding-top: 20px;
+  border-top: 1px solid #dde3ea;
   display: flex;
   justify-content: space-between;
+  gap: 8px;
+  font-size: 12.5px;
 }
 
 @media (max-width: 720px) {
   .cols {
-    gap: 32px;
+    gap: 36px;
     flex-wrap: wrap;
   }
   .bottom {
     flex-direction: column;
-    gap: 8px;
   }
 }

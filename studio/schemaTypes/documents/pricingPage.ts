@@ -9,7 +9,6 @@ export const pricingPage = defineType({
   type: 'document',
   fields: [
     defineField({name: 'hero', type: 'hero'}),
-    defineField({name: 'starter', title: 'Starter plan', type: 'planCard'}),
     defineField({name: 'pro', title: 'Pro plan', type: 'planCard'}),
     defineField({
       name: 'monthlyLabel',

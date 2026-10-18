@@ -1,0 +1,50 @@
+.hero {
+  padding: 96px 0 72px;
+  text-align: center;
+}
+
+.grey {
+  background: var(--surface);
+}
+
+.eyebrow {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--trace-dark);
+  margin-bottom: 14px;
+}
+
+.title {
+  font-size: clamp(40px, 6.4vw, 84px);
+  font-weight: 800;
+  font-stretch: 116%;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  max-width: 16ch;
+  margin: 0 auto;
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 36em;
+  margin: 26px auto 0;
+  font-size: clamp(18px, 1.8vw, 22px);
+  line-height: 1.5;
+  color: var(--paper-dim);
+  text-wrap: balance;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 36px;
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 64px 0 48px;
+  }
+}

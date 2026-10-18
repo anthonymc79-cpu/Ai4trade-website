@@ -30,8 +30,8 @@ export default async function Header() {
             <Image
               src="/logo.png"
               alt="Ai4Trade"
-              width={48}
-              height={48}
+              width={100}
+              height={100}
               className={styles.logoMark}
               priority
             />

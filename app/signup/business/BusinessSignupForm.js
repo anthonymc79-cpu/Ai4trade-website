@@ -2,19 +2,16 @@
 
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import styles from "../../for-electricians/ForElectricians.module.css";
+import styles from "./signup.module.css";
+import { PRICES, PRO_INCLUDED } from "@/lib/prices";
 
-const PLANS = [
-  { id: "trial", label: "7-day free trial — no card required" },
-  { id: "starter", label: "Starter — £29/month" },
-  { id: "pro", label: "Pro — from £59/month" },
-];
+// Starter is discontinued: old links with ?plan=starter fall back to the trial.
+const PLAN_IDS = ["trial", "pro"];
 
 export default function BusinessSignupForm() {
   const searchParams = useSearchParams();
-  const initialPlan = PLANS.some((p) => p.id === searchParams.get("plan"))
-    ? searchParams.get("plan")
-    : "trial";
+  const requested = searchParams.get("plan");
+  const initialPlan = PLAN_IDS.includes(requested) ? requested : "trial";
   const initialBilling = searchParams.get("billing") === "annual" ? "annual" : "monthly";
 
   const [form, setForm] = useState({
@@ -50,8 +47,8 @@ export default function BusinessSignupForm() {
         return;
       }
 
-      // Trial signups go straight to the app; paid plans go to Stripe
-      // Checkout first — either way the server tells us where to go.
+      // Trial signups go straight to the app; Pro goes to Stripe Checkout
+      // first. Either way the server tells us where to go.
       window.location.href = data.url;
     } catch {
       setError("Something went wrong. Please try again.");
@@ -59,116 +56,153 @@ export default function BusinessSignupForm() {
     }
   }
 
+  const isTrial = form.plan === "trial";
+  const proPrice =
+    form.billingCycle === "annual" ? PRICES.proAnnualMonthly : PRICES.proMonthly;
+
   return (
-    <section className={styles.hero}>
-      <div className="container">
-        <span className="eyebrow">Get started</span>
-        <h1 className={styles.heroTitle}>Set up your account</h1>
-        <p className={styles.heroLead}>
-          Takes about a minute. Paid plans continue to Stripe's secure
-          checkout next — the free trial needs no card at all.
-        </p>
+    <section className={styles.page}>
+      <div className={`container ${styles.grid}`}>
+        <div className={styles.intro}>
+          <p className={styles.eyebrow}>For electrical businesses</p>
+          <h1 className={styles.title}>
+            {isTrial ? `Start your free ${PRICES.trialDays}-day trial.` : "Set up your Pro account."}
+          </h1>
+          <p className={styles.lead}>
+            {isTrial
+              ? `Everything in Pro, free for ${PRICES.trialDays} days. No card needed, and it takes about a minute.`
+              : "Create your account, then pay securely through Stripe."}
+          </p>
+          <ul className={styles.included}>
+            {PRO_INCLUDED.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
 
-        <form onSubmit={handleSubmit} className="formCard">
-          {error && <div className="formError">{error}</div>}
+        <form onSubmit={handleSubmit} className={styles.card} noValidate={false}>
+          {error && (
+            <p className={styles.error} role="alert">
+              {error}
+            </p>
+          )}
 
-          <div className="field">
-            <label htmlFor="name">Your name</label>
+          <fieldset className={styles.plans}>
+            <legend className={styles.label}>How would you like to start?</legend>
+            <label className={`${styles.plan} ${isTrial ? styles.planOn : ""}`}>
+              <input
+                type="radio"
+                name="plan"
+                value="trial"
+                checked={isTrial}
+                onChange={() => updateField("plan", "trial")}
+              />
+              <span>
+                <strong>Free {PRICES.trialDays}-day trial</strong>
+                <small>No card needed</small>
+              </span>
+            </label>
+            <label className={`${styles.plan} ${!isTrial ? styles.planOn : ""}`}>
+              <input
+                type="radio"
+                name="plan"
+                value="pro"
+                checked={!isTrial}
+                onChange={() => updateField("plan", "pro")}
+              />
+              <span>
+                <strong>Start on Pro</strong>
+                <small>
+                  {PRICES.symbol}
+                  {proPrice} a month
+                </small>
+              </span>
+            </label>
+          </fieldset>
+
+          {!isTrial && (
+            <fieldset className={styles.billing}>
+              <legend className={styles.label}>Billing</legend>
+              <div className={styles.segmented}>
+                {[
+                  ["monthly", `Monthly, ${PRICES.symbol}${PRICES.proMonthly}`],
+                  ["annual", `Yearly, ${PRICES.symbol}${PRICES.proAnnualTotal}`],
+                ].map(([id, text]) => (
+                  <label key={id} className={form.billingCycle === id ? styles.segOn : undefined}>
+                    <input
+                      type="radio"
+                      name="billingCycle"
+                      value={id}
+                      checked={form.billingCycle === id}
+                      onChange={() => updateField("billingCycle", id)}
+                    />
+                    {text}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          )}
+
+          <div className={styles.field}>
+            <label htmlFor="name" className={styles.label}>
+              Your name
+            </label>
             <input
               id="name"
               type="text"
               required
+              autoComplete="name"
               value={form.name}
               onChange={(e) => updateField("name", e.target.value)}
-              placeholder="Dave Sparks"
             />
           </div>
 
-          <div className="field">
-            <label htmlFor="email">Work email</label>
+          <div className={styles.field}>
+            <label htmlFor="email" className={styles.label}>
+              Work email
+            </label>
             <input
               id="email"
               type="email"
               required
+              autoComplete="email"
               value={form.email}
               onChange={(e) => updateField("email", e.target.value)}
-              placeholder="you@sparkyltd.co.uk"
             />
           </div>
 
-          <div className="field">
-            <label htmlFor="password">Password</label>
+          <div className={styles.field}>
+            <label htmlFor="password" className={styles.label}>
+              Password
+            </label>
             <input
               id="password"
               type="password"
               required
               minLength={8}
+              autoComplete="new-password"
+              aria-describedby="password-hint"
               value={form.password}
               onChange={(e) => updateField("password", e.target.value)}
             />
+            <small id="password-hint" className={styles.hint}>
+              At least 8 characters.
+            </small>
           </div>
 
-          <div className="field">
-            <label htmlFor="plan">Plan</label>
-            <select
-              id="plan"
-              value={form.plan}
-              onChange={(e) => updateField("plan", e.target.value)}
-              style={{
-                width: "100%",
-                background: "var(--panel)",
-                border: "1px solid var(--wire-line)",
-                borderRadius: "var(--radius-sm)",
-                padding: "12px 14px",
-                color: "var(--paper)",
-                fontFamily: "var(--font-body)",
-                fontSize: "15px",
-              }}
-            >
-              {PLANS.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {form.plan === "pro" && (
-            <div className="field">
-              <label htmlFor="billingCycle">Billing</label>
-              <select
-                id="billingCycle"
-                value={form.billingCycle}
-                onChange={(e) => updateField("billingCycle", e.target.value)}
-                style={{
-                  width: "100%",
-                  background: "var(--panel)",
-                  border: "1px solid var(--wire-line)",
-                  borderRadius: "var(--radius-sm)",
-                  padding: "12px 14px",
-                  color: "var(--paper)",
-                  fontFamily: "var(--font-body)",
-                  fontSize: "15px",
-                }}
-              >
-                <option value="monthly">Monthly — £69/month</option>
-                <option value="annual">Annual — £708/year (£59/month, save ~15%)</option>
-              </select>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            className="btn btn--copper"
-            disabled={submitting}
-            style={{ width: "100%", justifyContent: "center" }}
-          >
+          <button type="submit" className={`btn btn--copper ${styles.submit}`} disabled={submitting}>
             {submitting
-              ? "Setting up…"
-              : form.plan === "trial"
-              ? "Start free trial →"
-              : "Continue to payment →"}
+              ? "Setting up your account…"
+              : isTrial
+                ? "Start free trial"
+                : "Continue to payment"}
           </button>
+
+          <p className={styles.small}>
+            {isTrial
+              ? `After ${PRICES.trialDays} days you can choose to continue on Pro.`
+              : "You’ll pay on Stripe’s secure checkout next."}
+          </p>
         </form>
       </div>
     </section>

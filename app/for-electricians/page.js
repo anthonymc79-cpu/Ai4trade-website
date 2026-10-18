@@ -16,7 +16,7 @@ const FALLBACK = {
     subheading:
       "Ai4Trade replaces the spreadsheet, the paper EICR pad, and the group chat with your office — one subscription per business, free for every customer who books through you.",
     buttons: [
-      { _key: "start", label: "Start your subscription", href: "/signup/business", style: "primary" },
+      { _key: "start", label: "Start your free trial", href: "/signup/business?plan=trial", style: "primary" },
       { _key: "pricing", label: "See pricing", href: "/pricing", style: "secondary" },
     ],
   },
@@ -26,12 +26,11 @@ const FALLBACK = {
       _type: "featureGrid",
       eyebrow: "What's inside",
       items: [
-        { _key: "job", label: "JOB-01", title: "One board for every job", description: "Track enquiries, quotes, scheduled work, and completed jobs across your whole team — no spreadsheets, no missed callbacks." },
+        { _key: "job", label: "JOB-01", title: "One board for every job", description: "Track enquiries, quotes, scheduled work, and completed jobs in one place — no spreadsheets, no missed callbacks." },
         { _key: "quo", label: "QUO-02", title: "Automated quoting rules", description: "Set pricing by job type and postcode once. Every new enquiry gets a quote back in minutes, not after you've finished today's jobs." },
         { _key: "cer", label: "CER-03", title: "EICR certificates, start to finish", description: "Run the inspection, log observation codes, and issue a signed certificate — all inside the same job record." },
-        { _key: "flr", label: "FLR-04", title: "Floorplans from the site visit", description: "Sketch circuits on site on a tablet, and turn them into a floorplan the whole team can reference on the next visit." },
-        { _key: "tea", label: "TEA-05", title: "Team roles and permissions", description: "Control what each engineer, office admin, or subcontractor can see and edit as your team grows past two people." },
-        { _key: "sub", label: "SUB-06", title: "One subscription, unlimited free customers", description: "You pay one subscription. Every homeowner who books through your portal uses it for free — always." },
+        { _key: "flr", label: "FLR-04", title: "Floorplans from the site visit", description: "Sketch circuits on site on a tablet, and turn them into a floorplan you can refer back to on the next visit." },
+        { _key: "sub", label: "SUB-05", title: "One subscription, unlimited free customers", description: "You pay one subscription. Every homeowner who books through your portal uses it for free — always." },
       ],
     },
     {

@@ -1,57 +1,52 @@
 import Link from "next/link";
-import styles from "../for-electricians/ForElectricians.module.css";
-import { getTutorials } from "@/lib/tutorials";
+import PageHero from "@/components/PageHero";
+import TutorialGrid from "@/components/tutorials/TutorialGrid";
+import { getTutorials, getTutorialsPageContent } from "@/lib/tutorials";
 import { pageMetadata } from "@/lib/seo";
 
-export const metadata = pageMetadata({
-  title: "Tutorials — Ai4Trade",
-  description:
-    "Learn Ai4Trade by watching it work — short videos from your first job to advanced quoting rules.",
-  path: "/tutorials",
-});
+// Picks up new or edited tutorials within about a minute of publishing.
+export const revalidate = 60;
 
-// Rebuild this listing at most once every hour, picking up new tutorials
-// without a full site redeploy.
-export const revalidate = 3600;
+export async function generateMetadata() {
+  const { seo } = await getTutorialsPageContent();
+  return pageMetadata({ title: seo.title, description: seo.description, path: "/tutorials" });
+}
+
+// Highlights every standalone "Pro" in the intro, matching the Pro badges.
+function HighlightPro({ text }) {
+  return text.split(/\b(Pro)\b/).map((part, i) =>
+    part === "Pro" ? (
+      <strong key={i} style={{ color: "var(--copper-dark, #a94900)" }}>
+        Pro
+      </strong>
+    ) : (
+      part
+    )
+  );
+}
 
 export default async function TutorialsPage() {
-  const tutorials = await getTutorials();
+  const [tutorials, { hero }] = await Promise.all([
+    getTutorials("electricians"),
+    getTutorialsPageContent(),
+  ]);
 
   return (
     <>
-      <section className={styles.hero}>
+      <PageHero
+        eyebrow={hero.eyebrow}
+        heading={hero.heading}
+        actions={
+          <Link href="/tutorials/homeowners" className="textLink">
+            Booking work on your own home? See the homeowner guides
+          </Link>
+        }
+      >
+        {hero.subheading && <HighlightPro text={hero.subheading} />}
+      </PageHero>
+      <section style={{ paddingBottom: 120 }}>
         <div className="container">
-          <span className="eyebrow">Tutorials</span>
-          <h1 className={styles.heroTitle}>Learn Ai4Trade by watching it work</h1>
-          <p className={styles.heroLead}>
-            Short videos covering everything from your first job to advanced
-            quoting rules. Marked <strong style={{ color: "var(--copper-bright)" }}>Pro</strong> tutorials
-            are for subscribed businesses.
-          </p>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <div className="grid-3">
-            {tutorials.map((t) => (
-              <Link
-                href={`/tutorials/${t.slug}`}
-                key={t.slug}
-                className="tag"
-                style={{ display: "block" }}
-              >
-                <span className="tag__code">
-                  {t.category.toUpperCase()} · {t.duration}
-                  {t.tier === "pro" && (
-                    <span style={{ color: "var(--copper-bright)" }}> · PRO</span>
-                  )}
-                </span>
-                <h3 className="tag__title">{t.title}</h3>
-                <p className="tag__body">{t.description}</p>
-              </Link>
-            ))}
-          </div>
+          <TutorialGrid tutorials={tutorials} />
         </div>
       </section>
     </>
