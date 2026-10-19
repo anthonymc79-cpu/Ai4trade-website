@@ -1,14 +1,17 @@
 // open-next.config.ts
 //
-// defineCloudflareConfig() fills in the required `default` server config
-// (incremental cache, queue, etc. all left as Cloudflare's defaults here)
-// — a bare `export default {}` fails validation because it has no
-// `default` key at all, which is what "config.default cannot be empty"
-// actually means: the field was missing, not literally empty.
-// See https://opennext.js.org/cloudflare for overriding the cache/queue
-// implementations (e.g. R2-backed ISR cache) if this site grows into
-// needing them.
+// Pages refresh their Sanity content every 60 seconds (`revalidate = 60`).
+// On Cloudflare that needs somewhere to keep the cached pages (an R2
+// bucket) and a way to rebuild them in the background (the queue).
+// Without these, the live site would keep showing whatever existed at
+// deploy time and edits in the Sanity editor would never appear.
+// Docs: https://opennext.js.org/cloudflare/caching
 
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
+import memoryQueue from "@opennextjs/cloudflare/overrides/queue/memory-queue";
 
-export default defineCloudflareConfig({});
+export default defineCloudflareConfig({
+  incrementalCache: r2IncrementalCache,
+  queue: memoryQueue,
+});

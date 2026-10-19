@@ -6,5 +6,19 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
-  }
+  },
+  // Where cached pages are stored (see open-next.config.ts).
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "ai4trade-next-cache"
+    }
+  ],
+  // Lets the site rebuild its own pages in the background.
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "ai4tradewebsite"
+    }
+  ]
 }
