@@ -1,0 +1,221 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px 22px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--surface);
+  transition: background 0.15s ease;
+}
+
+.card:hover {
+  background: #eaeef3;
+}
+
+.card:hover .play {
+  transform: scale(1.06);
+}
+
+.thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background:
+    radial-gradient(120% 90% at 20% 10%, #24476f 0%, transparent 60%),
+    linear-gradient(135deg, #12223a, var(--night));
+  display: grid;
+  place-items: center;
+}
+
+.play {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  display: grid;
+  place-items: center;
+  transition: transform 0.2s ease;
+}
+
+.play svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--night);
+  margin-left: 3px;
+}
+
+.pro {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--copper);
+  color: var(--night);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.duration {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardBody {
+  padding: 22px 24px 28px;
+}
+
+.category {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--trace-dark);
+}
+
+.title {
+  margin-top: 8px;
+  font-size: 21px;
+  font-stretch: 106%;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.desc {
+  margin-top: 10px;
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--paper-dim);
+}
+
+.empty {
+  text-align: center;
+  font-size: 18px;
+  color: var(--paper-dim);
+}
+
+/* Single tutorial */
+
+.detail {
+  padding: 56px 0 120px;
+}
+
+.detailInner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--trace-dark);
+}
+
+.back::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.back:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.detailCategory {
+  margin-top: 40px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--trace-dark);
+}
+
+.detailTitle {
+  margin-top: 10px;
+  font-size: clamp(34px, 5vw, 60px);
+  font-weight: 800;
+  font-stretch: 114%;
+  line-height: 1.03;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.detailDesc {
+  margin: 20px 0 40px;
+  max-width: 40em;
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--paper-dim);
+}
+
+.player {
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px -40px rgba(14, 26, 43, 0.45);
+}
+
+/* The existing player draws its own border; let the rounded frame lead. */
+.player > div {
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.locked {
+  text-align: center;
+  padding: clamp(40px, 7vw, 80px) 28px;
+  border-radius: 28px;
+  background: var(--night);
+  color: #ffffff;
+}
+
+.lockedLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--copper-bright);
+}
+
+.lockedTitle {
+  margin: 12px auto 0;
+  max-width: 16ch;
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-stretch: 112%;
+  line-height: 1.06;
+  text-wrap: balance;
+}
+
+.lockedText {
+  max-width: 30em;
+  margin: 16px auto 30px;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--night-text);
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,26 +1,67 @@
-import styles from "../for-electricians/ForElectricians.module.css";
+import PageHero from "@/components/PageHero";
+import { PRICES } from "@/lib/prices";
 import PricingCards from "@/components/PricingCards";
 import { pageMetadata } from "@/lib/seo";
+import { sanityFetch } from "@/lib/sanity/client";
+import { PRICING_PAGE_QUERY } from "@/lib/sanity/queries";
+import { withFallback } from "@/lib/sanity/withFallback";
 
-export const metadata = pageMetadata({
-  title: "Pricing — Ai4Trade",
-  description:
-    "Simple monthly or annual pricing for electrical business job management, quoting, and EICR certification. Starter from £29/month, Pro from £59/month billed annually. Free for every customer who books through you.",
-  path: "/pricing",
-});
+// Live site picks up published wording edits within about a minute.
+export const revalidate = 60;
 
-// Rebuilt at most once an hour — pricing rarely changes, so this avoids a
-// full redeploy while still staying static and fast the rest of the time.
-export const revalidate = 3600;
-
-// Kept in sync with app.js's own MA_PLANS/ANNUAL_PRICES — that file is
-// the source of truth for what each plan actually costs. GBP only — this
-// is a UK-based business and app.js itself has no other currency.
-const PRICES = { symbol: "£", starter: 29, proMonthly: 69, proAnnualMonthly: 59, proAnnualTotal: 708 };
+// Prices live in lib/prices.js (shared with the homepage), kept in sync with
+// app.js. Deliberately NOT editable in Sanity, so the website can never show
+// a different price from the one customers are charged.
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ai4trade.co.uk";
 
-function pricingJsonLd(prices) {
+// The current wording, used for anything not filled in in Sanity
+// (and as a safety net if Sanity can't be reached).
+const FALLBACK = {
+  hero: {
+    eyebrow: "Pricing",
+    heading: "One subscription per business. Free for every customer.",
+    subheading: "All prices in GBP. No hidden fees, cancel anytime.",
+  },
+  pro: {
+    label: "TIER · PRO",
+    name: "Pro",
+    description:
+      "Unlimited jobs, quoting, and EICR certificates, plus unlimited customer accounts, full webhook & CRM automation, CSV data export, and custom branding on your portal and certificates.",
+    buttonLabel: "Get started →",
+  },
+  monthlyLabel: "Monthly",
+  annualLabel: "Annual",
+  trialNote: {
+    before: "Not sure yet?",
+    linkText: "Start a free 30-day trial",
+    after: "— full access, no card required.",
+  },
+  footnote:
+    "Every plan includes unlimited free customer accounts. Your customers never pay to use their booking portal.",
+  seo: {
+    title: "Pricing — Ai4Trade",
+    description:
+      "Simple monthly or annual pricing for electrical business job management, quoting, and EICR certification. Pro from £59/month billed annually. Free for every customer who books through you.",
+  },
+};
+
+async function getContent() {
+  const data = await sanityFetch(PRICING_PAGE_QUERY);
+  if (!data) console.warn("/pricing: nothing from Sanity, showing built-in wording");
+  return withFallback(data, FALLBACK);
+}
+
+export async function generateMetadata() {
+  const content = await getContent();
+  return pageMetadata({
+    title: content.seo.title,
+    description: content.seo.description,
+    path: "/pricing",
+  });
+}
+
+function pricingJsonLd(prices, content) {
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -31,21 +72,14 @@ function pricingJsonLd(prices) {
     offers: [
       {
         "@type": "Offer",
-        name: "Starter",
-        price: String(prices.starter),
-        priceCurrency: "GBP",
-        billingDuration: "P1M",
-      },
-      {
-        "@type": "Offer",
-        name: "Pro (monthly)",
+        name: `${content.pro?.name || "Pro"} (monthly)`,
         price: String(prices.proMonthly),
         priceCurrency: "GBP",
         billingDuration: "P1M",
       },
       {
         "@type": "Offer",
-        name: "Pro (annual)",
+        name: `${content.pro?.name || "Pro"} (annual)`,
         price: String(prices.proAnnualTotal),
         priceCurrency: "GBP",
         billingDuration: "P1Y",
@@ -54,37 +88,36 @@ function pricingJsonLd(prices) {
   };
 }
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const content = await getContent();
+  const { hero } = content;
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingJsonLd(PRICES)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingJsonLd(PRICES, content)) }}
       />
-      <section className={styles.hero}>
-        <div className="container">
-          <span className="eyebrow">Pricing</span>
-          <h1 className={styles.heroTitle}>
-            One subscription per business. Free for every customer.
-          </h1>
-          <p className={styles.heroLead}>
-            All prices in GBP. No hidden fees, cancel anytime.
-          </p>
-        </div>
-      </section>
+      <PageHero eyebrow={hero.eyebrow} heading={hero.heading}>
+        {hero.subheading}
+      </PageHero>
 
-      <section className="section">
+      <section style={{ paddingBottom: 120 }}>
         <div className="container">
-          <PricingCards prices={PRICES} />
-        </div>
-      </section>
-
-      <section className="section--tight">
-        <div className="container">
-          <p style={{ color: "var(--wire)", fontSize: 13.5 }}>
-            Every plan includes unlimited free customer accounts. Your
-            customers never pay to use their booking portal.
-          </p>
+          <PricingCards prices={PRICES} content={content} />
+          {content.footnote && (
+            <p
+              style={{
+                maxWidth: 560,
+                margin: "40px auto 0",
+                textAlign: "center",
+                fontSize: 15,
+                color: "var(--paper-dim)",
+              }}
+            >
+              {content.footnote}
+            </p>
+          )}
         </div>
       </section>
     </>

@@ -2,100 +2,76 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import styles from "./PricingCards.module.css";
+import { PRO_INCLUDED } from "@/lib/prices";
 
-// Prices come from app.js's own MA_PLANS/ANNUAL_PRICES — the single
-// source of truth for what a plan actually costs and includes. Starter
-// has no annual option there, so it never gets a billing toggle.
-export default function PricingCards({ prices }) {
+// Prices come from lib/prices.js (kept in sync with app.js).
+// The wording (`content`) comes from Sanity's Pricing page document.
+export default function PricingCards({ prices, content }) {
   const [billing, setBilling] = useState("monthly");
-  const proPrice = billing === "annual" ? prices.proAnnualMonthly : prices.proMonthly;
+  const price = billing === "annual" ? prices.proAnnualMonthly : prices.proMonthly;
+
+  // Worked out from the prices, so it can't drift: 1 - 708 / (69 × 12) ≈ 15%.
+  const fullYear = prices.proMonthly * 12;
+  const savePercent = Math.round((((fullYear - prices.proAnnualTotal) / fullYear) * 100) / 5) * 5;
+
+  const { pro, trialNote } = content;
 
   return (
-    <>
-      <div className="grid-2">
-        <div className="tag">
-          <span className="tag__code">TIER · STARTER</span>
-          <h3 className="tag__title">Starter</h3>
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: 32, margin: "8px 0 14px" }}>
-            {prices.symbol}
-            {prices.starter}
-            <span style={{ fontSize: 14, color: "var(--wire)" }}>/month</span>
-          </p>
-          <p className="tag__body">
-            For a single electrician just getting off paper and
-            spreadsheets. Unlimited jobs, quoting, EICR certificates,
-            and your own booking portal for up to 25 customers.
-          </p>
-          <Link className="btn btn--copper" href="/signup/business?plan=starter">
-            Get started →
-          </Link>
+    <div className={styles.card}>
+      <div className={styles.top}>
+        <div>
+          <h2 className={styles.name}>{pro.name}</h2>
+          {pro.description && <p className={styles.desc}>{pro.description}</p>}
         </div>
 
-        <div className="tag">
-          <span className="tag__code">TIER · PRO</span>
-          <h3 className="tag__title">Pro</h3>
-          <p style={{ fontFamily: "var(--font-mono)", fontSize: 32, margin: "8px 0 14px" }}>
-            {prices.symbol}
-            {proPrice}
-            <span style={{ fontSize: 14, color: "var(--wire)" }}>/month</span>
-          </p>
-          {billing === "annual" && (
-            <p style={{ fontSize: 12, color: "var(--wire)", margin: "-8px 0 14px" }}>
-              Billed {prices.symbol}
-              {prices.proAnnualTotal}/year · save ~15%
-            </p>
-          )}
-          <p className="tag__body">
-            Everything in Starter, plus unlimited customer accounts,
-            full webhook &amp; CRM automation, CSV data export, and
-            custom branding on your portal and certificates.
-          </p>
-
-          <div
-            role="group"
-            aria-label="Billing frequency"
-            style={{ display: "inline-flex", border: "1px solid var(--wire-line)", borderRadius: 8, padding: 3, margin: "0 0 14px" }}
-          >
+        <div className={styles.priceBox}>
+          <div className={styles.segmented} role="group" aria-label="Billing frequency">
             {["monthly", "annual"].map((cycle) => (
               <button
                 key={cycle}
                 type="button"
                 onClick={() => setBilling(cycle)}
                 aria-pressed={billing === cycle}
-                style={{
-                  border: "none",
-                  borderRadius: 6,
-                  padding: "6px 12px",
-                  fontSize: 12.5,
-                  fontFamily: "inherit",
-                  cursor: "pointer",
-                  background: billing === cycle ? "var(--copper-bright, #c96a3f)" : "transparent",
-                  color: billing === cycle ? "#0D1B2A" : "var(--paper-dim)",
-                }}
+                className={billing === cycle ? styles.segOn : undefined}
               >
-                {cycle === "monthly" ? "Monthly" : "Annual (save ~15%)"}
+                {cycle === "monthly"
+                  ? content.monthlyLabel
+                  : `${content.annualLabel} (save ~${savePercent}%)`}
               </button>
             ))}
           </div>
-
-          <div>
-            <Link
-              className="btn btn--copper"
-              href={`/signup/business?plan=pro&billing=${billing}`}
-            >
-              Get started →
-            </Link>
-          </div>
+          <p className={styles.price}>
+            {prices.symbol}
+            {price}
+            <span>a month</span>
+          </p>
+          <p className={styles.billed}>
+            {billing === "annual"
+              ? `Billed ${prices.symbol}${prices.proAnnualTotal} a year`
+              : "Billed monthly"}
+          </p>
+          <Link className="btn btn--copper" href={`/signup/business?plan=pro&billing=${billing}`}>
+            {pro.buttonLabel}
+          </Link>
+          {trialNote.linkText && (
+            <p className={styles.trial}>
+              {trialNote.before}{" "}
+              <Link href="/signup/business?plan=trial">{trialNote.linkText}</Link>{" "}
+              {trialNote.after}
+            </p>
+          )}
         </div>
       </div>
 
-      <p style={{ color: "var(--wire)", fontSize: 13.5, marginTop: 24, textAlign: "center" }}>
-        Not sure yet?{" "}
-        <Link href="/signup/business?plan=trial" style={{ color: "inherit", textDecoration: "underline" }}>
-          Start a free 7-day trial
-        </Link>{" "}
-        — full access, no card required.
-      </p>
-    </>
+      <div className={styles.includedWrap}>
+        <h3 className={styles.includedTitle}>Everything included</h3>
+        <ul className={styles.included}>
+          {PRO_INCLUDED.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }

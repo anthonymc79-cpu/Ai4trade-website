@@ -1,28 +1,32 @@
+/* Slim, translucent bar that stays at the top while you scroll. */
 .header {
-  position: relative;
-  z-index: 20;
-  background: var(--panel);
-  border-bottom: 1px solid var(--wire-line);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  backdrop-filter: saturate(180%) blur(18px);
+  border-bottom: 1px solid rgba(14, 26, 43, 0.08);
 }
 
 .bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  padding: 18px 0;
+  gap: 32px;
+  height: 78px;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-shrink: 0;
 }
 
 .logoMark {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   flex-shrink: 0;
   border-radius: 50%;
   object-fit: cover;
@@ -31,15 +35,15 @@
 .logoWordmark {
   display: flex;
   align-items: baseline;
-  gap: 2px;
   font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 26px;
+  font-weight: 800;
+  font-stretch: 112%;
+  letter-spacing: -0.02em;
 }
 
 .logoAi {
-  color: var(--trace);
+  color: var(--trace-dark);
 }
 
 .logoNum {
@@ -51,12 +55,6 @@
   color: var(--paper);
 }
 
-@media (max-width: 420px) {
-  .logoWordmark {
-    display: none;
-  }
-}
-
 .nav {
   flex: 1;
   display: flex;
@@ -66,18 +64,20 @@
 .navLinks {
   display: flex;
   align-items: center;
-  gap: 32px;
-  font-size: 15px;
+  gap: 36px;
+  font-size: 16px;
   font-weight: 500;
-  color: var(--paper);
 }
 
-.navLinks > li > a {
-  color: var(--paper);
+.navLinks > li > a,
+.navBtn {
+  color: rgba(14, 26, 43, 0.82);
+  transition: color 0.15s ease;
 }
 
-.navLinks a:hover {
-  color: var(--trace-dark);
+.navLinks > li > a:hover,
+.navBtn:hover {
+  color: var(--paper);
 }
 
 .hasMenu {
@@ -92,35 +92,38 @@
   border: none;
   padding: 0;
   font: inherit;
-  color: var(--paper);
 }
 
 .hasMenu svg {
   color: var(--wire);
-  transition: transform 0.15s ease;
-}
-
-.hasMenu:hover svg {
-  transform: translateY(1px);
 }
 
 .dropdown {
   position: absolute;
-  top: calc(100% + 18px);
+  top: calc(100% + 26px);
   left: 50%;
-  transform: translateX(-50%);
-  min-width: 220px;
-  background: var(--panel);
-  border: 1px solid var(--wire-line);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 12px 28px rgba(11, 22, 38, 0.1);
+  min-width: 240px;
+  background: #ffffff;
+  border: 1px solid rgba(14, 26, 43, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 24px 48px -16px rgba(14, 26, 43, 0.22);
   padding: 8px;
   display: flex;
   flex-direction: column;
   opacity: 0;
   visibility: hidden;
-  translate: -50% 4px;
-  transition: opacity 0.15s ease, translate 0.15s ease;
+  translate: -50% 6px;
+  transition: opacity 0.18s ease, translate 0.18s ease, visibility 0.18s;
+}
+
+/* Invisible bridge so the menu doesn't close while the pointer crosses the gap. */
+.dropdown::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -28px;
+  height: 28px;
 }
 
 .hasMenu:hover .dropdown,
@@ -131,34 +134,70 @@
 }
 
 .dropdown a {
-  padding: 9px 12px;
-  border-radius: 6px;
-  font-size: 14.5px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--paper);
   white-space: nowrap;
 }
 
 .dropdown a:hover {
-  background: var(--ink-raised);
-  color: var(--trace-dark);
+  background: var(--surface);
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
+}
+
+/* Smaller buttons in the bar than in page content. */
+.actions :global(.btn) {
+  padding: 10px 20px;
+  font-size: 15px;
+}
+
+.actions :global(.btn--ghost) {
+  border-color: transparent;
+  color: var(--trace-dark);
+}
+
+.actions :global(.btn--ghost):hover {
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 1020px) {
+  .navLinks {
+    gap: 24px;
+    font-size: 15px;
+  }
 }
 
 @media (max-width: 900px) {
   .nav {
     display: none;
   }
+
+  .bar {
+    height: 66px;
+  }
+
+  .logoMark {
+    width: 42px;
+    height: 42px;
+  }
+
+  .logoWordmark {
+    font-size: 22px;
+  }
 }
 
-@media (max-width: 520px) {
-  .actions .btn--ghost {
+@media (max-width: 420px) {
+  .logoWordmark {
     display: none;
   }
 }

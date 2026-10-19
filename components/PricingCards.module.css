@@ -1,0 +1,166 @@
+.card {
+  max-width: 980px;
+  margin: 0 auto;
+  background: var(--surface);
+  border-radius: 32px;
+  overflow: hidden;
+}
+
+.top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 48px;
+  padding: clamp(32px, 5vw, 56px);
+  align-items: center;
+}
+
+.name {
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 800;
+  font-stretch: 116%;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.desc {
+  margin-top: 18px;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--paper-dim);
+}
+
+.priceBox {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px;
+  text-align: center;
+}
+
+.segmented {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 4px;
+  gap: 4px;
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.segmented button {
+  border: none;
+  background: transparent;
+  color: var(--paper-dim);
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+}
+
+.segmented button:hover {
+  color: var(--paper);
+}
+
+.segmented .segOn,
+.segmented .segOn:hover {
+  background: var(--night);
+  color: #ffffff;
+}
+
+.price {
+  margin-top: 24px;
+  font-size: 80px;
+  font-weight: 800;
+  font-stretch: 112%;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.price span {
+  margin-left: 8px;
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--paper-dim);
+}
+
+.billed {
+  margin: 10px 0 24px;
+  font-size: 15px;
+  color: var(--paper-dim);
+}
+
+.trial {
+  margin-top: 18px;
+  font-size: 14.5px;
+  color: var(--paper-dim);
+}
+
+.trial a {
+  color: var(--trace-dark);
+  font-weight: 600;
+}
+
+.trial a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.includedWrap {
+  border-top: 1px solid #e1e7ee;
+  padding: 36px clamp(32px, 5vw, 56px) 44px;
+}
+
+.includedTitle {
+  font-size: 20px;
+  font-stretch: 108%;
+  margin-bottom: 20px;
+}
+
+.included {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 32px;
+}
+
+.included li {
+  position: relative;
+  padding-left: 28px;
+  font-size: 16.5px;
+}
+
+.included li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  width: 12px;
+  height: 7px;
+  border-left: 2.5px solid var(--success);
+  border-bottom: 2.5px solid var(--success);
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 820px) {
+  .top {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .included {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .priceBox {
+    padding: 24px 16px;
+  }
+
+  .segmented button {
+    padding: 8px 12px;
+    font-size: 13.5px;
+  }
+}

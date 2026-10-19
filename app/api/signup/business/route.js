@@ -6,8 +6,8 @@
 // abandoned checkout still leaves a working trial account, never the paid
 // tier itself) and only flip to the real plan once the Stripe webhook
 // confirms payment — see app/api/webhooks/stripe/route.js. Trial signups
-// need no Stripe step at all: no card required, matching app.js's own
-// 7-day trial copy.
+// need no Stripe step at all: no card required, and the trial length
+// (TRIAL_DAYS in lib/plans.js) matches app.js's own 30-day trial.
 //
 // Note: `profiles` and `admin_links` are the tables app.js itself reads/
 // writes (see admin_links.slug, profiles.plan/plan_active in app.js) —
