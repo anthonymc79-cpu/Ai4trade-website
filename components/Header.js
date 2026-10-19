@@ -69,7 +69,7 @@ export default async function Header() {
           </nav>
 
           <div className={styles.actions}>
-            <a className="btn btn--ghost" href={`${APP_URL}/login`}>
+            <a className="btn btn--ghost" href={`${APP_URL}/`}>
               Log in
             </a>
             {headerButton?.href && (

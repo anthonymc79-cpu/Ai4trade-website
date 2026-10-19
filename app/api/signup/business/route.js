@@ -79,6 +79,13 @@ export async function POST(request) {
     });
 
   if (createUserError) {
+    // Shows the real reason in `npx wrangler tail` / Cloudflare logs.
+    console.error(
+      "Signup: Supabase createUser failed:",
+      createUserError.status,
+      createUserError.code,
+      createUserError.message
+    );
     const status = createUserError.status === 422 ? 409 : 500;
     return Response.json(
       {
@@ -103,6 +110,7 @@ export async function POST(request) {
   });
 
   if (profileError) {
+    console.error("Signup: profile insert failed:", profileError.code, profileError.message);
     await supabase.auth.admin.deleteUser(userId);
     return Response.json(
       { error: "Could not create account profile" },
@@ -124,7 +132,8 @@ export async function POST(request) {
 
   if (plan === "trial") {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.ai4trade.co.uk";
-    return Response.json({ url: `${appUrl}/login?welcome=1` });
+    // The app has no /login page: its sign-in screen is at the root address.
+    return Response.json({ url: `${appUrl}/?welcome=1` });
   }
 
   const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL;
