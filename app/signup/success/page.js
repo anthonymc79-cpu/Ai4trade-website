@@ -25,7 +25,7 @@ export default function SignupSuccessPage() {
           Your account is being activated — this usually takes a few
           seconds. Log in to start setting up your team and your first job.
         </p>
-        <a className="btn btn--copper" href={`${APP_URL}/#business`}>
+        <a className="btn btn--copper" href={`${APP_URL}/index.html#business`}>
           Log in to Ai4Trade →
         </a>
       </div>

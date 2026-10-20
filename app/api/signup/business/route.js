@@ -132,9 +132,10 @@ export async function POST(request) {
 
   if (plan === "trial") {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.ai4trade.co.uk";
-    // The app has no /login page. Its sign-in screens live at the root
-    // address: "#business" opens the trade business sign-in directly.
-    return Response.json({ url: `${appUrl}/?welcome=1#business` });
+    // The app has no /login page. It runs at /index.html, and "#business"
+    // opens the trade business sign-in directly. (The bare address
+    // redirects to /index.html and drops the "#business" part.)
+    return Response.json({ url: `${appUrl}/index.html?welcome=1#business` });
   }
 
   const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL;
