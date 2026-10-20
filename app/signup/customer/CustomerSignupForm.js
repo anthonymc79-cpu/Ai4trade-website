@@ -60,7 +60,7 @@ export default function CustomerSignupForm() {
             You can log in now to book a job and track it through to a
             signed certificate.
           </p>
-          <a className="btn btn--copper" href={`${appUrl}/`}>
+          <a className="btn btn--copper" href={`${appUrl}/#customer`}>
             Log in →
           </a>
         </div>
